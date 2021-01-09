@@ -1,0 +1,1 @@
+{"menu":[{"id_menu":"1","name":"Dashboard","controller":"dashboard","method":"index","menu_icon":"dashboard","sub_menu":[]},{"id_menu":"18","name":"Patient","controller":"patient","method":"allpatient","menu_icon":"supervised_user_circle","sub_menu":[]}],"allowsmenu":{"dashboard\/index":"dashboard\/index","patient\/allpatient":"patient\/allpatient"}}
