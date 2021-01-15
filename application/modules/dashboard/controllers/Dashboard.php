@@ -54,6 +54,7 @@ class Dashboard extends MY_Controller{
 		$data['employers']=$this->common_model->getAllEmployers();
 		$data['cdt_codes']=$this->patient_model->getCdtCodes();
 		//printData($data['cdt_codes']);
+		$data['feeschedule'] = $this->dashboard_model->getFeeSchedule(1);
 		$data['office_cdtcodes'] = $this->dashboard_model->OfficeCdtcodes(1);
 		$data['officeName'] = $this->dashboard_model->OfficeName(1);
 		$data['patient'] = $this->patient_model->patientdetails($id);
@@ -112,6 +113,7 @@ class Dashboard extends MY_Controller{
 		$data['cdt_codes']=$this->patient_model->getCdtCodes();
 		$data['office_cdtcodes'] = $this->dashboard_model->OfficeCdtcodes(1);
 
+		$data['feeschedule'] = $this->dashboard_model->getFeeSchedule(1);
 		$data['officeName'] = $this->dashboard_model->OfficeName(1);
 		$data['patient'] = $this->patient_model->patientdetails($id);
 		$data['patientInsurance'] = $this->patient_model->patientInsurance($id);
@@ -145,7 +147,8 @@ class Dashboard extends MY_Controller{
 	function getPlans()
 	{
 		$id= isset($_GET['insurance_id'])?$_GET['insurance_id']:0;
-		$getInsurance = $this->dashboard_model->getAjaxInsurancePlans($id);
+		$employerid= isset($_GET['employerid'])?$_GET['employerid']:0;
+		$getInsurance = $this->dashboard_model->getAjaxInsurancePlans($id,$employerid);
 		$select= isset($_GET['selected'])?$_GET['selected']:0;
 		$option='<option value=0>Please Select</option>';
 		foreach ($getInsurance as $row) {
@@ -177,12 +180,16 @@ class Dashboard extends MY_Controller{
 		$history = $this->dashboard_model->PatientHistory($id);
 		$users = $this->dashboard_model->getAllUser();
 		$agent = $this->dashboard_model->InsuranceAgent($id);
+		$feeschedule = $this->dashboard_model->getFeeSchedule(1);
+		$office_cdtcodes = $this->dashboard_model->getOfficeCdtcodes(1,$plansid);
+		// printData($office_cdtcodes);
+		// exit();
 		// $data['pvalue'] = array('view' => 'edit_patient', 'title' => 'Edit Patient');
 
 
-		$this->load->view('pdf_patient',compact('insurance','insurance_plans','employers','cdt_codes','office_cdtcodes','officeName','patient','patientInsurance','plan','insurancePlans','history','users','agent'));
+		$html=$this->load->view('pdf_patient',compact('insurance','insurance_plans','employers','cdt_codes','office_cdtcodes','officeName','patient','patientInsurance','plan','insurancePlans','history','users','agent','feeschedule'),true);
 		//$html = $this->output->get_output();
-		//$this->pdf->generate($html,'CustomerInvoice');
+		$this->pdf->generate($html,'CustomerInvoice');
 		//$this->load->view('pdf_patient',$data);
 	}
 

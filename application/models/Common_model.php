@@ -74,7 +74,7 @@ class Common_model extends MY_Model{
 		$res = array();
 		$this->db->select('*');
 		$this->db->from('insurance');
-		$this->db->order_by('insurancename','desc');
+		$this->db->order_by('insurancename','asc');
 		$query =  $this->db->get();
 		if($query->num_rows() > 0){
 			$res=$query->result_array();
@@ -85,7 +85,7 @@ class Common_model extends MY_Model{
 		$res = array();
 		$this->db->select('*');
 		$this->db->from('insurance_plans');
-		$this->db->order_by('groupid','desc');
+		$this->db->order_by('groupid','asc');
 		$query =  $this->db->get();
 		if($query->num_rows() > 0){
 			$res=$query->result_array();

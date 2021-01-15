@@ -158,6 +158,7 @@ class Dashboard_model extends MY_Model{
 			's_firstname'=>isset($postVal['s_firstname'])?$postVal['s_firstname']:'',
 			's_lastname'=>isset($postVal['s_lastname'])?$postVal['s_lastname']:'',
 			's_dob'=>getDateYmd(isset($postVal['s_dob'])?$postVal['s_dob']:''),
+			'freetexts'=>isset($postVal['freetexts'])?$postVal['freetexts']:'',
 			'lastupdate'=>getCurrentDateTime(),
 			'updatedby'=>$postVal['id_user'],
 		);
@@ -170,6 +171,7 @@ class Dashboard_model extends MY_Model{
 			'plansid'=>$postVal['insurance_plans_id'],
 			'employerid'=>isset($postVal['employerid'])?$postVal['employerid']:'',
 			'memberid'=>isset($postVal['memberid'])?$postVal['memberid']:'',
+			// 'feescheduleid'=>isset($postVal['feescheduleid'])?$postVal['feescheduleid']:0,
 			'ins_benefit_remaining'=>isset($postVal['ins_benefit_remaining'])?$postVal['ins_benefit_remaining']:'',
 			'ind_ded_remaining'=>isset($postVal['ind_ded_remaining'])?$postVal['ind_ded_remaining']:'',
 			'family_ded_remaining'=>isset($postVal['family_ded_remaining'])?$postVal['family_ded_remaining']:'',
@@ -208,6 +210,8 @@ class Dashboard_model extends MY_Model{
 
 		if (isset($postVal['insurance_update']) && $postVal['insurance_update']>0) {
 			$others=array(
+				'productid'=>isset($postVal['productid'])?$postVal['productid']:'0',
+				'feescheduleid'	=>isset($postVal['feescheduleid'])?$postVal['feescheduleid']:'0',
 				'ind_deductible_annual'	=>isset($postVal['ind_deductible_annual'])?$postVal['ind_deductible_annual']:'',
 				'ind_limit_annual'	=>isset($postVal['ind_limit_annual'])?$postVal['ind_limit_annual']:'0',
 				'family_deductible_annual'	=>isset($postVal['family_deductible_annual'])?$postVal['family_deductible_annual']:'',
@@ -220,7 +224,11 @@ class Dashboard_model extends MY_Model{
 				'insurance_benefits'	=>isset($postVal['insurance_benefits'])?$postVal['insurance_benefits']:'',
 				'preventive_deduction_applies'=>isset($postVal['preventive_deduction_applies'])?$postVal['preventive_deduction_applies']:'N',
 				'diagnostic_deduction_applies'=>isset($postVal['diagnostic_deduction_applies'])?$postVal['diagnostic_deduction_applies']:'N',
-				'restorative_deduction_applies'=>isset($postVal['restorative_deduction_applies'])?$postVal['restorative_deduction_applies']:'N',
+				'restorative_ant_ded_applies'=>isset($postVal['restorative_ant_ded_applies'])?$postVal['restorative_ant_ded_applies']:'N',
+				'restorative_post_ded_applies'=>isset($postVal['restorative_post_ded_applies'])?$postVal['restorative_post_ded_applies']:'N',
+				'basic_ded_applies'=>isset($postVal['basic_ded_applies'])?$postVal['basic_ded_applies']:'N',
+				'major_ded_applies'=>isset($postVal['major_ded_applies'])?$postVal['major_ded_applies']:'N',
+				'perio_maintenance_ded_applies'=>isset($postVal['perio_maintenance_ded_applies'])?$postVal['perio_maintenance_ded_applies']:'N',
 				'endodontic_deduction_applies'=>isset($postVal['endodontic_deduction_applies'])?$postVal['endodontic_deduction_applies']:'N',
 				'periodontics_deduction_applies'=>isset($postVal['periodontics_deduction_applies'])?$postVal['periodontics_deduction_applies']:'N',
 				'prosthodonticsremovable_ded_applies'=>isset($postVal['prosthodonticsremovable_ded_applies'])?$postVal['prosthodonticsremovable_ded_applies']:'N',
@@ -232,7 +240,11 @@ class Dashboard_model extends MY_Model{
 				'adjunctivegenservices_ded_applies'=>isset($postVal['adjunctivegenservices_ded_applies'])?$postVal['adjunctivegenservices_ded_applies']:'N',
 				'preventive_percentage'	=>isset($postVal['preventive_percentage'])?$postVal['preventive_percentage']:'0',
 				'diagnostics_percentage'=>isset($postVal['diagnostics_percentage'])?$postVal['diagnostics_percentage']:'0',
-				'restorative_percentage'=>isset($postVal['restorative_percentage'])?$postVal['restorative_percentage']:'0',
+				'restorative_ant_percentage'=>isset($postVal['restorative_ant_percentage'])?$postVal['restorative_ant_percentage']:'0',
+				'restorative_post_percentage'=>isset($postVal['restorative_post_percentage'])?$postVal['restorative_post_percentage']:'0',
+				'basic_percentage'=>isset($postVal['basic_percentage'])?$postVal['basic_percentage']:'0',
+				'major_percentage'=>isset($postVal['major_percentage'])?$postVal['major_percentage']:'0',
+				'periomaint_percentage'=>isset($postVal['periomaint_percentage'])?$postVal['periomaint_percentage']:'0',
 				'endodontics_percentage'=>isset($postVal['endodontics_percentage'])?$postVal['endodontics_percentage']:'0',
 				'periodontics_percentage'=>isset($postVal['periodontics_percentage'])?$postVal['periodontics_percentage']:'0',
 				'prosthodonticsremovable_percentage' =>isset($postVal['prosthodonticsremovable_percentage'])?$postVal['prosthodonticsremovable_percentage']:'0',
@@ -248,11 +260,15 @@ class Dashboard_model extends MY_Model{
 				'crown_payment'			=>isset($postVal['crown_payment'])?$postVal['crown_payment']:'',
 				'orthodontics_payment'	=>isset($postVal['orthodontics_payment'])?$postVal['orthodontics_payment']:'',
 				'filling_downgrades'	=>isset($postVal['filling_downgrades'])?$postVal['filling_downgrades']:'',
-				'crown_molar_downgrades'=>isset($postVal['crown_downgrades'])?$postVal['crown_downgrades']:'',
+				'crown_molar_downgrades'=>isset($postVal['crown_molar_downgrades'])?$postVal['crown_molar_downgrades']:'',
 				'crown_premolar_downgrades'=>isset($postVal['crown_premolar_downgrades'])?$postVal['crown_premolar_downgrades']:'',
 				'preventive_waitingperiod'=>isset($postVal['preventive_waitingperiod'])?$postVal['preventive_waitingperiod']:'',
 				'diagnostic_waitingperiod'=>isset($postVal['diagnostic_waitingperiod'])?$postVal['diagnostic_waitingperiod']:'',
-				'restorative_waitingperiod'=>isset($postVal['restorative_waitingperiod'])?$postVal['restorative_waitingperiod']:'',
+				'restorative_int_waitingperiod'=>isset($postVal['restorative_int_waitingperiod'])?$postVal['restorative_int_waitingperiod']:'',
+				'restorative_post_waitingperiod'=>isset($postVal['restorative_post_waitingperiod'])?$postVal['restorative_post_waitingperiod']:'',
+				'basic_waitingperiod'=>isset($postVal['basic_waitingperiod'])?$postVal['basic_waitingperiod']:'',
+				'major_waitingperiod'=>isset($postVal['major_waitingperiod'])?$postVal['major_waitingperiod']:'',
+				'periomaint_waitingperiod'=>isset($postVal['periomaint_waitingperiod'])?$postVal['periomaint_waitingperiod']:'',
 				'endodontics_waitingperiod'=>isset($postVal['endodontics_waitingperiod'])?$postVal['endodontics_waitingperiod']:'',
 				'periodontics_waitingperiod'=>isset($postVal['periodontics_waitingperiod'])?$postVal['periodontics_waitingperiod']:'',
 				'prosthodonticsremovable_waitingperiod'=>isset($postVal['prosthodonticsremovable_waitingperiod'])?$postVal['prosthodonticsremovable_waitingperiod']:'',
@@ -262,6 +278,8 @@ class Dashboard_model extends MY_Model{
 				'oralsurgery_waitingperiod'=>isset($postVal['oralsurgery_waitingperiod'])?$postVal['oralsurgery_waitingperiod']:'',
 				'orthodontics_waitingperiod'=>isset($postVal['orthodontics_waitingperiod'])?$postVal['orthodontics_waitingperiod']:'',
 				'adjunctivegenservices_waitingperiod'=>isset($postVal['adjunctivegenservices_waitingperiod'])?$postVal['adjunctivegenservices_waitingperiod']:'',
+				'insurance_in_out'=>isset($postVal['insurance_in_out'])?$postVal['insurance_in_out']:'',
+				'pays_to_provider'=>isset($postVal['pays_to_provider'])?$postVal['pays_to_provider']:'',
 				'updatedby'=>$postVal['id_user'],
 				'updatedon'=>getCurrentDateTime(),
 			);
@@ -269,7 +287,6 @@ class Dashboard_model extends MY_Model{
 			$this->db->update('insurance_plans',$others);
 		}
 
-		//printData($postVal);
 		if (isset($postVal['insurance_update']) && $postVal['insurance_update']>0) {
 			if (isset($postVal['cdtgroups'])) {
 				$plansid=isset($postVal['plansid'])?$postVal['plansid']:0;
@@ -279,7 +296,7 @@ class Dashboard_model extends MY_Model{
 						$checkPlan= $this->singlePlans($plansid,$row['cdtid']);
 						if (count($checkPlan)>0 ) {
 							$data=array(
-							'procedure_level'=>$postVal['procedure_level'][$i],
+							'allowed_frequency_duration'=>$postVal['allowed_frequency_duration'][$i],
 							'allowed_frequency'=>$postVal['code_allowed_frequency_plan'][$i],
 							'allowed_frequency_months'=>isset($postVal['allowed_frequency'])?$postVal['allowed_frequency']:1,
 							'coverage_percentage'=>$postVal['coverage_percentage'][$i],
@@ -293,7 +310,7 @@ class Dashboard_model extends MY_Model{
 							$data=array(
 							'insurance_plans_id'=>$plansid,
 							'cdtid'=>$row['cdtid'],
-							'procedure_level'=>$postVal['procedure_level'][$i],
+							'allowed_frequency_duration'=>$postVal['allowed_frequency_duration'][$i],
 							'allowed_frequency'=>$postVal['code_allowed_frequency_plan'][$i],
 							'allowed_frequency_months'=>isset($postVal['allowed_frequency'])?$postVal['allowed_frequency']:1,
 							'coverage_percentage'=>$postVal['coverage_percentage'][$i],
@@ -346,6 +363,7 @@ class Dashboard_model extends MY_Model{
 		// 	}
 		// }
 
+
 		if (isset($postVal['insurance_update']) && $postVal['insurance_update']>0) {
 			if (isset($postVal['cdt_codes_id_single']) && count($postVal['cdt_codes_id_single'])) {
 				foreach ($postVal['cdt_codes_id_single'] as $key => $row) {
@@ -361,7 +379,7 @@ class Dashboard_model extends MY_Model{
 							'allowed_frequency'=>$postVal['allowed_frequency_single'][$key],
 							'allowed_frequency_months'=>isset($postVal['allowed_frequency'])?$postVal['allowed_frequency']:1,
 							'coverage_percentage'=>$postVal['coverage_percentage_single'][$key],
-							'procedure_level'=>$postVal['procedure_level_single'][$key],
+							'allowed_frequency_duration'=>$postVal['allowed_frequency_duration_single'][$key],
 							'updatedby'=>$postVal['id_user'],
 							'updatedon'=>getCurrentDateTime(),
 							// 'waiting'=>$postVal['waiting_single'][$key],
@@ -377,7 +395,7 @@ class Dashboard_model extends MY_Model{
 							'allowed_frequency'=>$postVal['allowed_frequency_single'][$key],
 							'allowed_frequency_months'=>isset($postVal['allowed_frequency'])?$postVal['allowed_frequency']:1,
 							'coverage_percentage'=>$postVal['coverage_percentage_single'][$key],
-							'procedure_level'=>$postVal['procedure_level_single'][$key],
+							'allowed_frequency_duration'=>$postVal['allowed_frequency_duration_single'][$key],
 							'updatedby'=>$postVal['id_user'],
 							'updatedon'=>getCurrentDateTime(),
 							// 'waiting'=>$postVal['waiting_single'][$key],
@@ -640,14 +658,17 @@ class Dashboard_model extends MY_Model{
 			'p_firstname'=>isset($postVal['p_firstname'])?$postVal['p_firstname']:'',
 			'p_lastname'=>isset($postVal['p_lastname'])?$postVal['p_lastname']:'',
 			'p_dob'=>getDateYmd(isset($postVal['p_dob'])?$postVal['p_dob']:''),
-			// 'dataentry'=>1,
+			'dataentry'=>1,
 			's_firstname'=>isset($postVal['s_firstname'])?$postVal['s_firstname']:'',
 			's_lastname'=>isset($postVal['s_lastname'])?$postVal['s_lastname']:'',
 			's_dob'=>getDateYmd(isset($postVal['s_dob'])?$postVal['s_dob']:''),
 			'attachment_front'=>$images['front'],
 			'attachment_back'=>$images['back'],
+			'freetexts'=>isset($postVal['freetexts'])?$postVal['freetexts']:'',
 			'createdby'=>$postVal['id_user'],
 			'creation_date'=>getCurrentDateTime(),
+			'lastupdate'=>getCurrentDateTime(),
+			'updatedby'=>$postVal['id_user'],
 		);
 		$this->db->insert('patients',$patient);
 		$postVal['patientid']=$this->db->insert_id();
@@ -658,6 +679,7 @@ class Dashboard_model extends MY_Model{
 			'plansid'=>$postVal['insurance_plans_id'],
 			'employerid'=>isset($postVal['employerid'])?$postVal['employerid']:'',
 			'memberid'=>isset($postVal['memberid'])?$postVal['memberid']:'',
+			// 'feescheduleid'=>isset($postVal['feescheduleid'])?$postVal['feescheduleid']:0,
 			'ins_benefit_remaining'=>isset($postVal['ins_benefit_remaining'])?$postVal['ins_benefit_remaining']:'',
 			'ind_ded_remaining'=>isset($postVal['ind_ded_remaining'])?$postVal['ind_ded_remaining']:'',
 			'family_ded_remaining'=>isset($postVal['family_ded_remaining'])?$postVal['family_ded_remaining']:'',
@@ -700,6 +722,8 @@ class Dashboard_model extends MY_Model{
 
 		if (isset($postVal['insurance_update']) && $postVal['insurance_update']>0) {
 			$others=array(
+				'productid'=>isset($postVal['productid'])?$postVal['productid']:'0',
+				'feescheduleid'	=>isset($postVal['feescheduleid'])?$postVal['feescheduleid']:'0',
 				'ind_deductible_annual'	=>isset($postVal['ind_deductible_annual'])?$postVal['ind_deductible_annual']:'',
 				'ind_limit_annual'	=>isset($postVal['ind_limit_annual'])?$postVal['ind_limit_annual']:'0',
 				'family_deductible_annual'	=>isset($postVal['family_deductible_annual'])?$postVal['family_deductible_annual']:'',
@@ -710,9 +734,13 @@ class Dashboard_model extends MY_Model{
 				'predetermination_needed'=>isset($postVal['predetermination_needed'])?$postVal['predetermination_needed']:'0',
 				// 'predetermination_rec'	=>isset($postVal['predetermination_rec'])?$postVal['predetermination_rec']:'',
 				'insurance_benefits'	=>isset($postVal['insurance_benefits'])?$postVal['insurance_benefits']:'',
-						'preventive_deduction_applies'=>isset($postVal['preventive_deduction_applies'])?$postVal['preventive_deduction_applies']:'N',
+				'preventive_deduction_applies'=>isset($postVal['preventive_deduction_applies'])?$postVal['preventive_deduction_applies']:'N',
 				'diagnostic_deduction_applies'=>isset($postVal['diagnostic_deduction_applies'])?$postVal['diagnostic_deduction_applies']:'N',
-				'restorative_deduction_applies'=>isset($postVal['restorative_deduction_applies'])?$postVal['restorative_deduction_applies']:'N',
+				'restorative_ant_ded_applies'=>isset($postVal['restorative_ant_ded_applies'])?$postVal['restorative_ant_ded_applies']:'N',
+				'restorative_post_ded_applies'=>isset($postVal['restorative_post_ded_applies'])?$postVal['restorative_post_ded_applies']:'N',
+				'basic_ded_applies'=>isset($postVal['basic_ded_applies'])?$postVal['basic_ded_applies']:'N',
+				'major_ded_applies'=>isset($postVal['major_ded_applies'])?$postVal['major_ded_applies']:'N',
+				'perio_maintenance_ded_applies'=>isset($postVal['perio_maintenance_ded_applies'])?$postVal['perio_maintenance_ded_applies']:'N',
 				'endodontic_deduction_applies'=>isset($postVal['endodontic_deduction_applies'])?$postVal['endodontic_deduction_applies']:'N',
 				'periodontics_deduction_applies'=>isset($postVal['periodontics_deduction_applies'])?$postVal['periodontics_deduction_applies']:'N',
 				'prosthodonticsremovable_ded_applies'=>isset($postVal['prosthodonticsremovable_ded_applies'])?$postVal['prosthodonticsremovable_ded_applies']:'N',
@@ -724,7 +752,11 @@ class Dashboard_model extends MY_Model{
 				'adjunctivegenservices_ded_applies'=>isset($postVal['adjunctivegenservices_ded_applies'])?$postVal['adjunctivegenservices_ded_applies']:'N',
 				'preventive_percentage'	=>isset($postVal['preventive_percentage'])?$postVal['preventive_percentage']:'0',
 				'diagnostics_percentage'=>isset($postVal['diagnostics_percentage'])?$postVal['diagnostics_percentage']:'0',
-				'restorative_percentage'=>isset($postVal['restorative_percentage'])?$postVal['restorative_percentage']:'0',
+				'restorative_ant_percentage'=>isset($postVal['restorative_ant_percentage'])?$postVal['restorative_ant_percentage']:'0',
+				'restorative_post_percentage'=>isset($postVal['restorative_post_percentage'])?$postVal['restorative_post_percentage']:'0',
+				'basic_percentage'=>isset($postVal['basic_percentage'])?$postVal['basic_percentage']:'0',
+				'major_percentage'=>isset($postVal['major_percentage'])?$postVal['major_percentage']:'0',
+				'periomaint_percentage'=>isset($postVal['periomaint_percentage'])?$postVal['periomaint_percentage']:'0',
 				'endodontics_percentage'=>isset($postVal['endodontics_percentage'])?$postVal['endodontics_percentage']:'0',
 				'periodontics_percentage'=>isset($postVal['periodontics_percentage'])?$postVal['periodontics_percentage']:'0',
 				'prosthodonticsremovable_percentage' =>isset($postVal['prosthodonticsremovable_percentage'])?$postVal['prosthodonticsremovable_percentage']:'0',
@@ -734,17 +766,21 @@ class Dashboard_model extends MY_Model{
 				'oralsurgery_percentage	'=>isset($postVal['oralsurgery_percentage'])?$postVal['oralsurgery_percentage']:'0',
 				'orthodontics_percentage'=>isset($postVal['orthodontics_percentage'])?$postVal['orthodontics_percentage']:'0',
 				'adjunctivegenservices_percentage'=>isset($postVal['adjunctivegenservices_percentage'])?$postVal['adjunctivegenservices_percentage']:'0',
-				'allowed_frequency'	=>isset($postVal['allowed_frequency'])?$postVal['allowed_frequency']:'',
+				'allowed_frequency'	=>isset($postVal['allowed_frequency'])?$postVal['allowed_frequency']:'1',
 				'orthodontics_lifetime_max'	=>isset($postVal['orthodontics_lifetime_max'])?$postVal['orthodontics_lifetime_max']:'',
 				'orthodontics_agelimit'	=>isset($postVal['orthodontics_agelimit'])?$postVal['orthodontics_agelimit']:'',
 				'crown_payment'			=>isset($postVal['crown_payment'])?$postVal['crown_payment']:'',
 				'orthodontics_payment'	=>isset($postVal['orthodontics_payment'])?$postVal['orthodontics_payment']:'',
 				'filling_downgrades'	=>isset($postVal['filling_downgrades'])?$postVal['filling_downgrades']:'',
-				'crown_molar_downgrades'=>isset($postVal['crown_downgrades'])?$postVal['crown_downgrades']:'',
+				'crown_molar_downgrades'=>isset($postVal['crown_molar_downgrades'])?$postVal['crown_molar_downgrades']:'',
 				'crown_premolar_downgrades'=>isset($postVal['crown_premolar_downgrades'])?$postVal['crown_premolar_downgrades']:'',
 				'preventive_waitingperiod'=>isset($postVal['preventive_waitingperiod'])?$postVal['preventive_waitingperiod']:'',
 				'diagnostic_waitingperiod'=>isset($postVal['diagnostic_waitingperiod'])?$postVal['diagnostic_waitingperiod']:'',
-				'restorative_waitingperiod'=>isset($postVal['restorative_waitingperiod'])?$postVal['restorative_waitingperiod']:'',
+				'restorative_int_waitingperiod'=>isset($postVal['restorative_int_waitingperiod'])?$postVal['restorative_int_waitingperiod']:'',
+				'restorative_post_waitingperiod'=>isset($postVal['restorative_post_waitingperiod'])?$postVal['restorative_post_waitingperiod']:'',
+				'basic_waitingperiod'=>isset($postVal['basic_waitingperiod'])?$postVal['basic_waitingperiod']:'',
+				'major_waitingperiod'=>isset($postVal['major_waitingperiod'])?$postVal['major_waitingperiod']:'',
+				'periomaint_waitingperiod'=>isset($postVal['periomaint_waitingperiod'])?$postVal['periomaint_waitingperiod']:'',
 				'endodontics_waitingperiod'=>isset($postVal['endodontics_waitingperiod'])?$postVal['endodontics_waitingperiod']:'',
 				'periodontics_waitingperiod'=>isset($postVal['periodontics_waitingperiod'])?$postVal['periodontics_waitingperiod']:'',
 				'prosthodonticsremovable_waitingperiod'=>isset($postVal['prosthodonticsremovable_waitingperiod'])?$postVal['prosthodonticsremovable_waitingperiod']:'',
@@ -754,8 +790,10 @@ class Dashboard_model extends MY_Model{
 				'oralsurgery_waitingperiod'=>isset($postVal['oralsurgery_waitingperiod'])?$postVal['oralsurgery_waitingperiod']:'',
 				'orthodontics_waitingperiod'=>isset($postVal['orthodontics_waitingperiod'])?$postVal['orthodontics_waitingperiod']:'',
 				'adjunctivegenservices_waitingperiod'=>isset($postVal['adjunctivegenservices_waitingperiod'])?$postVal['adjunctivegenservices_waitingperiod']:'',
-				'updatedon'=>getCurrentDateTime(),
+				'insurance_in_out'=>isset($postVal['insurance_in_out'])?$postVal['insurance_in_out']:'',
+				'pays_to_provider'=>isset($postVal['pays_to_provider'])?$postVal['pays_to_provider']:'',
 				'updatedby'=>$postVal['id_user'],
+				'updatedon'=>getCurrentDateTime(),
 			);
 
 			$this->db->where('insurance_plans_id',$postVal['insurance_plans_id']);
@@ -772,7 +810,7 @@ class Dashboard_model extends MY_Model{
 						if (count($checkPlan)>0 ) {
 							$data=array(
 							'procedure_level'=>$postVal['procedure_level'][$i],
-							'allowed_frequency'=>$postVal['code_allowed_frequency_plan'][$i],
+							'allowed_frequency_duration'=>$postVal['allowed_frequency_duration'][$i],
 							'allowed_frequency_months'=>isset($postVal['allowed_frequency'])?$postVal['allowed_frequency']:1,
 							'coverage_percentage'=>$postVal['coverage_percentage'][$i],
 							'waiting'=>$postVal['waiting'][$i],
@@ -785,7 +823,7 @@ class Dashboard_model extends MY_Model{
 							$data=array(
 							'insurance_plans_id'=>$plansid,
 							'cdtid'=>$row['cdtid'],
-							'procedure_level'=>$postVal['procedure_level'][$i],
+							'allowed_frequency_duration'=>$postVal['allowed_frequency_duration'][$i],
 							'allowed_frequency'=>$postVal['code_allowed_frequency_plan'][$i],
 							'allowed_frequency_months'=>isset($postVal['allowed_frequency'])?$postVal['allowed_frequency']:1,
 							'coverage_percentage'=>$postVal['coverage_percentage'][$i],
@@ -794,7 +832,7 @@ class Dashboard_model extends MY_Model{
 							'updatedon'=>getCurrentDateTime(),
 							);
 							$this->db->insert('insurance_plans_cdt_codes',$data);
-						}
+						}					
 					}
 				}
 			}
@@ -837,6 +875,7 @@ class Dashboard_model extends MY_Model{
 		// 		}
 		// 	}
 		// }
+
 
 		if (isset($postVal['insurance_update']) && $postVal['insurance_update']>0) {
 			if (isset($postVal['cdt_codes_id_single']) && count($postVal['cdt_codes_id_single'])) {
@@ -986,6 +1025,20 @@ class Dashboard_model extends MY_Model{
 		return $result;
 	}
 
+	function getFeeSchedule($id=1)
+	{
+		$result = array();
+		$this->db->select('*');
+		$this->db->from('feeschedule'.' f');
+		$where = array('f.officeid' => $id);
+		$this->db->where($where);
+		$query = $this->db->get();
+		if($query->num_rows() > 0){
+			$result = $query->result_array();
+		}
+		return $result;
+	}
+
 	function getInsurance($id=0)
 	{
 		$result = array();
@@ -1002,12 +1055,12 @@ class Dashboard_model extends MY_Model{
 		return $result;
 	}
 
-	function getAjaxInsurancePlans($id=0)
+	function getAjaxInsurancePlans($id=0,$employerid=0)
 	{
 		$result = array();
 		$this->db->select('*');
 		$this->db->from('insurance_plans'.' p');
-		$where = array('p.insurance_id' => $id);
+		$where = array('p.insurance_id'=> $id,'p.employer_id'=>$employerid);
 		$this->db->where($where);
 		$query = $this->db->get();
 		if($query->num_rows() > 0){
@@ -1099,6 +1152,23 @@ class Dashboard_model extends MY_Model{
 		$this->db->select('*');
 		$this->db->from('cdt_codes');
 		$this->db->like('cdtgroups', $group);
+		$query = $this->db->get();
+		if($query->num_rows() > 0){
+			$result = $query->result_array();
+		}
+		return $result;
+	}
+
+	function getOfficeCdtcodes($id=1,$plansid=0)
+	{
+		$result = array();
+		$this->db->select('*');
+		$this->db->from('office_cdtcodes'.' oc');
+		$this->db->join('insurance_plans_cdt_codes'.' i','oc.cdtid=i.cdtid','left');
+		$this->db->join('cdt_codes'.' c','oc.cdtid=c.cdtid','left');
+		$where = array('oc.officeid' => $id,'i.insurance_plans_id'=>$plansid);
+		$this->db->where($where);
+		$this->db->limit(9);
 		$query = $this->db->get();
 		if($query->num_rows() > 0){
 			$result = $query->result_array();
