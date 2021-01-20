@@ -44,7 +44,7 @@
                         <div id="new-insurance"></div>
 			            </div>
 		          	</div>
-		          	<div class="col-md-6 col-12">
+		          	<div class="col-md-4 col-12">
 			            <div class="form-group">
 				             <label for="first_name" class="col-form-label">Group<span> *</span></label>
 				             <select class="form-control" name="plansid" id="plansid" onchange="insurancePlanChange(this)">
@@ -57,7 +57,13 @@
 				            </div>
 		          		</div>
 		          	</div>
-		          	<div class="col-md-6 col-12">
+		          	<div class="col-md-4 col-12">
+			            <div class="form-group">
+			              <label for="first_name" class="col-form-label">Sub Group</label>
+			              <input type="text" class="form-control" id="sub_group" name="sub_group" placeholder="Enter Sub Group" >
+			            </div>
+		          	</div>
+		          	<div class="col-md-4 col-12">
 			            <div class="form-group">
 			              <label for="first_name" class="col-form-label">Product Id</label>
 			              <input type="text" class="form-control" id="product_id" name="product_id" placeholder="Product Id" >

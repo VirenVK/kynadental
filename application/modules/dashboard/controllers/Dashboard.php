@@ -51,6 +51,7 @@ class Dashboard extends MY_Controller{
 		$plansid=isset($_GET['plansid']) && $_GET['plansid']>0?$_GET['plansid']:0;
 		$data['insurance']=$this->common_model->getAllInsurance();
 		$data['insurance_plans']=$this->common_model->getAllInsurancePlan();
+		$data['plansgroup']=$this->dashboard_model->getAllInsurancePlanSubGroup($plansid);
 		$data['employers']=$this->common_model->getAllEmployers();
 		$data['cdt_codes']=$this->patient_model->getCdtCodes();
 		//printData($data['cdt_codes']);
@@ -112,7 +113,7 @@ class Dashboard extends MY_Controller{
 		$data['employers']=$this->common_model->getAllEmployers();
 		$data['cdt_codes']=$this->patient_model->getCdtCodes();
 		$data['office_cdtcodes'] = $this->dashboard_model->OfficeCdtcodes(1);
-
+		$data['plansgroup']=$this->dashboard_model->getAllInsurancePlanSubGroup($plansid);
 		$data['feeschedule'] = $this->dashboard_model->getFeeSchedule(1);
 		$data['officeName'] = $this->dashboard_model->OfficeName(1);
 		$data['patient'] = $this->patient_model->patientdetails($id);
@@ -163,8 +164,7 @@ class Dashboard extends MY_Controller{
 
 	function patientPdf()
 	{	
-				$this->load->library('pdf');
-
+		$this->load->library('pdf');
 		$id=isset($_GET['id']) && $_GET['id']>0?$_GET['id']:0;
 		$plansid=isset($_GET['plansid']) && $_GET['plansid']>0?$_GET['plansid']:0;
 		$insurance=$this->common_model->getAllInsurance();
@@ -191,6 +191,16 @@ class Dashboard extends MY_Controller{
 		//$html = $this->output->get_output();
 		$this->pdf->generate($html,'CustomerInvoice');
 		//$this->load->view('pdf_patient',$data);
+	}
+
+	function getSubGroup()
+	{	
+		$groupid= isset($_GET['groupid'])?$_GET['groupid']:0;
+		$subgroupid= isset($_GET['subgroupid'])?$_GET['subgroupid']:0;
+		$getInsurance = $this->dashboard_model->getAjaxPlansSubGroup($groupid,$subgroupid);
+
+		echo json_encode($getInsurance);
+		
 	}
 
 

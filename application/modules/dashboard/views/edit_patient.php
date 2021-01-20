@@ -98,10 +98,12 @@
 						            	<a href="#" class="btn btn-primary">Insurance Back page</a>
 						            <?php } ?>
 						          <a class="btn btn-outline-secondary" href="<?php echo WEB_URL.'dashboard/index';?>">Return to the Dashboard</a>
+
 					        	</span>
 					            <h2 class="font-weight-bold text-dark text-center"><?php echo isset($officeName['officename'])?$officeName['officename']:'' ?> </h2>
-					             <h4 class="font-weight-bold text-dark text-center"> BENEFITS BREAKDOWN </h4>
-					            <a href="<?php echo WEB_URL.'dashboard/patientPdf?id='.$id.'&plansid='.$plansid ?>" class="btn-sm btn-success" target="_blank" style='float: right;' >Patient Pdf</a>
+					           	<a href="<?php echo WEB_URL.'dashboard/patientPdf?id='.$id.'&plansid='.$plansid ?>" class="btn-sm btn-success" target="_blank" style='float: right;' >Print To Pdf</a>
+
+					             <h4 class="font-weight-bold text-dark text-center" style="margin-left: 124px;"> BENEFITS BREAKDOWN </h4>
 					        </div>
 					       <!--  <div class="col-12">
 					            <h4 class="font-weight-bold text-dark text-center"> BENEFITS BREAKDOWN </h4>
@@ -139,12 +141,25 @@
 					                </tr>
 					                 <tr>
 					                <th>Group #:</th>   
-					                <th colspan="3">
+					                <th colspan="">
 					                	<select class="form-control" name="plansid" onchange="changePlansid(this)" id="plans-id">
 					                		<option value="0">Please Select</option>
 				                            <?php foreach ($insurance_plans as $pRow) { ?>
 				                                <option value="<?php echo $pRow['insurance_plans_id'];?>" <?php echo isset($plan['insurance_plans_id']) && $plan['insurance_plans_id']==$pRow['insurance_plans_id']?'selected':''; ?>><?php echo $pRow['groupid'];?></option>
 				                            <?php } ?>
+				                        </select>
+					                </th>
+					                <th><b>-</b> <span style="float: right;color: #9c9fb3">Sub-Group:</span></th>   
+					                <th colspan="" class="disabled-input">
+					                	<select class="form-control" name="subgroupid" onchange="subgroupChanges(this)">
+					                		<option value="0">Please Select</option>
+				                            <?php foreach ($plansgroup as $gRow) { 
+				                            	if (trim($gRow['subgroup']) !='') {
+				                            	?>
+				                                <option value="<?php echo $gRow['subgroupid'];?>" <?php echo isset($patientInsurance['subgroupid']) && $patientInsurance['subgroupid']==$gRow['subgroupid']?'selected':''; ?>><?php echo $gRow['subgroup'];?></option>
+				                            <?php }
+				                        	}
+				                             ?>
 				                        </select>
 					                </th>
 					                </tr>
@@ -188,7 +203,7 @@
 					                </tr>
 					                <tr> -->
 					                <tr>
-					                <th>Insurance Benefit Coverage</th>   
+					                <th>Insurance cover</th>   
 					                <th class="disabled-input" style="width: 25%">
 					                	<select class="form-control" name="insurance_benefits" onchange="insuranceBenefits(this)">
 					                		<option value="calendar" <?php echo isset($plan['insurance_benefits']) && $plan['insurance_benefits']=='calendar'?'selected':''; ?>>Calendar Year</option>
@@ -200,7 +215,7 @@
 					                $effective_date=isset($plan['insurance_benefits']) && $plan['insurance_benefits']=='plan'?$effective_date_default:(new \DateTime(date("Y")."-01-01"))->format("m/d/Y");
 					                ?>
 					                <th style="width: 25%">Effective Date:</th>  
-					                <th class="disabled-input">
+					                <th class="">
 					                	<input type="hidden" name="" id="current_year" value="<?php echo (new \DateTime(date("Y")."-01-01"))->format("m/d/Y"); ?>">
 					                	<input type="text" name="effective_date" class="form-control datepicker effective_date" value="<?php echo $effective_date; ?>"></th>
 					                </tr>
@@ -220,7 +235,7 @@
 					                <tr>
 					            </table>
 					              <table class="table table-bordered">
-					                <tr>
+					                <tr >
 					                <input type="hidden" name="patientid" id="patientid" value="<?php echo $patient['patientid'];?>">
 					                <input type="hidden" name="insurance_plans_id" id="insurance_plans_id" value="<?php echo $_GET['plansid'];?>">
 					                <input type="hidden" name="officeid" value="<?php echo $patient['officeid'];?>">
@@ -230,7 +245,17 @@
 					                </tr>
 					                <tr>
 					                <th>Date of Birth</th>   
-					                <th colspan="2"><input type="text"  name="p_dob" class="form-control datepicker p_dob" value="<?php echo getDateFormatted($patient['p_dob'],'m/d/y')?>"></th>
+					                <th><input type="text"  name="p_dob" class="form-control datepicker p_dob" value="<?php echo getDateFormatted($patient['p_dob'],'m/d/y')?>"></th>
+					                 <th>Sex 
+					                 	<span style="float: right;width: 60px">
+					                 		<select name="p_sex" class="form-control"> 
+					                 			<option value="M" <?php echo isset($patient['p_sex']) && $patient['p_sex']=='M'?'selected':''; ?>>M</option>
+					                 			<option value="F" <?php echo isset($patient['p_sex']) && $patient['p_sex']=='F'?'selected':''; ?>>F</option>
+					                 			<option value="O" <?php echo isset($patient['p_sex']) && $patient['p_sex']=='O'?'selected':''; ?>>O</option>
+					                 		</select>
+					                 	</span>
+					                 </th>   
+					             
 					                </tr>
 					                <tr>
 					                	<th>Same as Patient's</th>
@@ -255,7 +280,7 @@
 					                <tr>
 					                <th>Maximum</th>   
 					                <th>$</th>
-					                <th class="disabled-input"><input type="text" name="ind_limit_annual" class="form-control" value="<?php echo isset($plan['ind_limit_annual'])?$plan['ind_limit_annual']:''; ?>"></th>
+					                <th class="disabled-input"><input type="text" name="ind_limit_annual" class="form-control" value="<?php echo isset($plan['ind_limit_annual'])?$plan['ind_limit_annual']:''; ?>" id="ind_limit_annual"></th>
 					                </tr>
 					                <tr>
 					                <th>Remaining</th>
@@ -268,7 +293,7 @@
 					                <tr>
 					                <th>Individual Deductions</th>   
 					                <th>$</th>
-					                <th class="disabled-input"><input type="text" name="ind_deductible_annual" class="form-control" value="<?php echo isset($plan['ind_deductible_annual'])?$plan['ind_deductible_annual']:''; ?>"></th>
+					                <th class="disabled-input"><input type="text" name="ind_deductible_annual" class="form-control" value="<?php echo isset($plan['ind_deductible_annual'])?$plan['ind_deductible_annual']:''; ?>" id="ind_deductible_annual"></th>
 					                </tr>
 					                <tr>
 					                <th>Remaining</th>   
@@ -278,7 +303,7 @@
 					                <tr>
 					                <th>Family Deduction</th>   
 					                <th>$</th>
-					                <th class="disabled-input"><input type="text" name="family_deductible_annual" class="form-control" value="<?php echo isset($plan['family_deductible_annual'])?$plan['family_deductible_annual']:''; ?>"></th>
+					                <th class="disabled-input"><input type="text" name="family_deductible_annual" class="form-control" value="<?php echo isset($plan['family_deductible_annual'])?$plan['family_deductible_annual']:''; ?>" id="family_deductible_annual"></th>
 					                </tr>
 					                <tr>
 					                <th>Remaining</th>   
@@ -290,22 +315,28 @@
 					            <table class="table table-bordered disabled-input">
 					                <tr>
 					                <th>Missing Tooth Clause</th>
-					                <th style="width: 20%" class="text-center">Y</th>
-					                <th class="text-center"><input type="radio" name="missing_tooth_clause" value="1" <?php echo isset($plan['missing_tooth_clause']) && $plan['missing_tooth_clause']=='1'?'checked':'' ?>></th>
-					                <th class="text-center">N</th>
-					                <th style="width: 8%" class="text-center"><input type="radio" name="missing_tooth_clause" value="0" <?php echo isset($plan['missing_tooth_clause']) && $plan['missing_tooth_clause']=='0'?'checked':'' ?>></th>
+					                <th class="text-center">
+					                	<select class="form-control" name="missing_tooth_clause">
+					                		<option value="0" <?php echo isset($plan['missing_tooth_clause']) && $plan['missing_tooth_clause']=='0'?'selected':'' ?>>N</option>
+					                		<option value="1" <?php echo isset($plan['missing_tooth_clause']) && $plan['missing_tooth_clause']=='1'?'selected':'' ?>>Y</option>
+					                	</select>
+					                </th>
 					                </tr>
 					                <tr>
 					                <th>Predetermination Needed</th>
-					                <th class="text-center">Y</th>
-					                <th class="text-center"><input type="radio" name="predetermination_needed" value="1" <?php echo isset($plan['predetermination_needed']) && $plan['predetermination_needed']=='1'?'checked':'' ?> onclick="predeterminationNeeded(1)" ></th>
-					                <th class="text-center">N</th>
-					                <th class="text-center"><input type="radio" name="predetermination_needed" value="0" <?php echo isset($plan['predetermination_needed']) && $plan['predetermination_needed']=='0'?'checked':'' ?> onclick="predeterminationNeeded(0)"></th>
+					                <th class="text-center">
+					                	<select class="form-control" name="predetermination_needed" onchange="predeterminationNeeded(this)">
+					                		<option value="0" <?php echo isset($plan['predetermination_needed']) && $plan['predetermination_needed']=='0'?'selected':'' ?>>N</option>
+					                		<option value="1" <?php echo isset($plan['predetermination_needed']) && $plan['predetermination_needed']=='1'?'selected':'' ?>>Y</option>
+					                	</select>
+
+					                </th>
 					                </tr>
 					                <tr>
-					                <th>Predetermination Rec.</th>
-					                <th colspan="2">Above</th>
-					                <th colspan="2"><input type="text" name="predetermination_needed_new" class="form-control" value="<?php echo isset($plan['predetermination_needed'])?$plan['predetermination_needed']:''?>" id='predetermination-req' <?php echo isset($plan['predetermination_needed']) && $plan['predetermination_needed']=='1'?'readonly':'' ?>></th>
+					                <th>Recommended Above.</th>
+					                <th class="text-center">
+					                	<input type="text" name="predetermination_needed_new" class="form-control" value="<?php echo isset($plan['predetermination_needed'])?$plan['predetermination_needed']:''?>" id='predetermination-req' <?php echo isset($plan['predetermination_needed']) && $plan['predetermination_needed']=='1'?'readonly':'' ?>>
+					                </th>
 					                </tr>
 					            </table>
 					             
@@ -322,6 +353,7 @@
 					                <th colspan="" class="text-center">Date 4</th>
 					                </tr>
 					                <?php
+					                	$cdt_codes_histroy=array('120'=>'Exam','140'=>'Limited Exam','1110'=>'Prophy','270'=>'Bitewings');
 					                	if (count($history)>0) { 
 					                		foreach ($history as  $hRow) { ?>
 							                <tr>
@@ -329,8 +361,8 @@
 							                		<input type="hidden" name="historyId[]" value="<?php echo $hRow['cdtid']?>">
 									                <select class="form-control" name="history_field[]">
 										              <option value="0">Please Select</option>
-						                            	<?php foreach ($cdt_codes as $cdtcodes) { ?>
-							                                <option value="<?php echo $cdtcodes['cdtid'];?>" <?php echo $cdtcodes['cdtid']==$hRow['cdtid']?'selected':''?>><?php echo $cdtcodes['cdt_codes'];?>
+						                            	<?php foreach ($cdt_codes_histroy as $key => $cdtcodes) { ?>
+							                                <option value="<?php echo $key;?>" <?php echo $key==$hRow['cdtid']?'selected':''?>><?php echo $cdtcodes;?>
 							                                </option>
 						                            <?php } ?>
 					                        		</select>
@@ -344,14 +376,16 @@
 					               	<?php 
 					               		}
 						           	} ?>
-						           	<?php for ($i=0; $i < 1; $i++) { ?>
+
+						           	<?php 
+						           	for ($i=0; $i < 3; $i++) { ?>
 						                <tr class="tr_clone_histroy">
 						                  <th style="width: 20%">
 						                  	<input type="hidden" name="historyId[]" value="0">
 							                <select class="form-control" name="history_field[]">
 								              <option value="0">Please Select</option>
-				                            	<?php foreach ($cdt_codes as $cdtcodes) { ?>
-					                                <option value="<?php echo $cdtcodes['cdtid'];?>"><?php echo $cdtcodes['cdt_codes'];?>
+				                            	<?php foreach ($cdt_codes_histroy as $key => $cdtcodes) { ?>
+					                                <option value="<?php echo $key;?>"><?php echo $cdtcodes;?>
 					                                </option>
 				                            <?php } ?>
 			                        		</select>
@@ -367,14 +401,7 @@
 						                <div id="add-row2"></div>
 						                </tr>
 					            </table>
-					            <table class="table table-bordered">
-					                <tr>
-					                <th colspan="4" class="text-center">Notes</th>
-					                </tr>
-					                <tr>
-					                <th><textarea class="form-control" name="freetexts"><?php echo isset($patient['freetexts'])?$patient['freetexts']:''; ?></textarea></th>					               
-					                </tr>					               
-					            </table>
+					          
 					        </div>
 					        <div class="col-md-8 col-sm-12">
 					            <table class="table table-bordered disabled-input">
@@ -384,22 +411,22 @@
 
 					                <tr>
 					                <th colspan="" class="text-center" ></th>
-					                <th colspan="" class="text-center" style="width: 6%">%age</th>
+					                <th colspan="" class="text-center" style="width: 6%">%</th>
 					                <th colspan="" class="text-center">Ded. Applies</th>
 					                <th colspan="" class="text-center">Waiting Period</th>
 					                <th colspan="" class="text-center"></th>
-					                <th colspan="" class="text-center" style="width: 6%">%age</th>
+					                <th colspan="" class="text-center" style="width: 6%">%</th>
 					                <th colspan="" class="text-center">Ded. Applies</th>
 					                <th colspan="" class="text-center">Waiting Period</th>
 					                <th colspan="" class="text-center"></th>
-					                <th colspan="" class="text-center" style="width: 6%">%age</th>
+					                <th colspan="" class="text-center" style="width: 6%">%</th>
 					                <th>Ded. Applies</th>
 					                <th colspan="" class="text-center">Waiting Period</th>
 					                </tr>
 					                <tr>
 						                <span style="float: right;color: #2C78BC;margin-right: 18px;">  <input type="checkbox" id="checkbox1" value="1" name="insurance_update"> Edit Insurance Plans</span>
 						                <th>Preventive</th>
-						                <th><input type="text" name="preventive_percentage" class="form-control" value="<?php echo isset($plan['preventive_percentage'])?$plan['preventive_percentage']:''?>"></th>
+						                <th><input type="text" name="preventive_percentage" class="form-control" value="<?php echo isset($plan['preventive_percentage'])?$plan['preventive_percentage']:'100'?>"></th>
 						                <th class="text-center"><input type="checkbox" name="preventive_deduction_applies" value="Y" <?php echo isset($plan['preventive_deduction_applies']) && $plan['preventive_deduction_applies']=='Y'?'checked':'' ?>></th>
 						                <th><select class="form-control" name="preventive_waitingperiod">
 							                	<?php for ($i=0; $i < 25 ; $i++) { ?>
@@ -437,7 +464,7 @@
 					               
 					                <tr>
 					                	<th>Diagnostics</th>
-						                <th><input type="text" name="diagnostics_percentage" class="form-control" value="<?php echo isset($plan['diagnostics_percentage'])?$plan['diagnostics_percentage']:''?>"></th>
+						                <th><input type="text" name="diagnostics_percentage" class="form-control" value="<?php echo isset($plan['diagnostics_percentage'])?$plan['diagnostics_percentage']:'100'?>"></th>
 						                <th class="text-center">
 						                	<input type="checkbox" name="diagnostic_deduction_applies" value="Y" <?php echo isset($plan['diagnostic_deduction_applies']) && $plan['diagnostic_deduction_applies']=='Y'?'checked':'' ?>>
 						                </th>
@@ -653,7 +680,7 @@
 						                <th><input type="checkbox" name="restorative_post_ded_applies" value="Y" <?php echo isset($plan['restorative_post_ded_applies']) && $plan['restorative_post_ded_applies']=='Y'?'checked':'' ?>></th>
 					                </tr>
 					            </table> -->
-					            <table class="table table-bordered disabled-input">
+					            <table class="table table-bordered disabled-input" style="display: none;">
 					                <tr>
 					                <th>Allowed Frequency</th>
 					                <th class="text-center">Calendar</th>
@@ -666,12 +693,11 @@
 					            </table>
 					             <table class="table table-bordered disabled-input">
 					              <tr>
-					                <th colspan="">Code</th>
-					                <th>Description</th>
+					                <th colspan="">Description</th>
 					                <th>Up to Age</th>
 					                <th colspan="4">Allowed Frequency</th>
-					                <th>Insurance Covers</th>
-					                <th></th>
+					               <!--  <th>Insurance Covers</th>
+					                <th></th> -->
 					                </tr>
 					                <tr>
 					                <?php
@@ -691,7 +717,7 @@
 					                		$single[$value['cdtid']]=array(
 					                		'to_age'=>$value['to_age'],
 					                		'allowed_frequency'=>$value['allowed_frequency'],
-					                		'allowed_frequency_months'=>$allowed_frequency_months,
+					                		'allowed_frequency_months'=>'Calendar',
 					                		'coverage_percentage'=>$percentage[$value['treatmenttypeid']],
 					                		'allowed_frequency_duration_single'=>$value['allowed_frequency_duration'],
 					                		'waiting'=>$value['waiting'],
@@ -702,62 +728,36 @@
 					                }
 					                ?>
 					                <tr>
-					                <th>D1208<input type="hidden" name="cdt_codes_id_single[]" value="1208"></th>
-					                <th>Topical Application of Fluoride</th>
+					                <th>Fluoride<input type="hidden" name="cdt_codes_id_single[]" value="1208"></th>
 					                <th style="width: 8%">
 					                	<input type="text" name="to_age_single[]" class="form-control" value="<?php echo isset($single[1208]['to_age'])?$single[1208]['to_age']:''?>">
 					                </th>
-					                <th style="width: 4%"><input type="text" name="allowed_frequency_single[]" class="form-control" value="<?php echo isset($single[1208]['allowed_frequency'])?$single[1208]['allowed_frequency']:''?>"></th>
-					                <th>Times in</th>
-					                <th style="width: 4%"><input type="text" name="allowed_frequency_duration_single[]" class="form-control"  value="<?php echo isset($single[1208]['allowed_frequency_duration_single'])?$single[1208]['allowed_frequency_duration_single']:''?>"></th>
+					                <th style="width: 8%"><input type="text" name="allowed_frequency_single[]" class="form-control" value="<?php echo isset($single[1208]['allowed_frequency'])?$single[1208]['allowed_frequency']:'1'?>"></th>
+					                <th class="text-center">Times in</th>
+					                <th style="width: 8%"><input type="text" name="allowed_frequency_duration_single[]" class="form-control"  value="<?php echo isset($single[1208]['allowed_frequency_duration_single'])?$single[1208]['allowed_frequency_duration_single']:'12'?>"></th>
 					                <th>
-					                	<input type="text" name="allowed_frequency_months_single[]" class="allowed_frequency_months_new form-control" readonly="" value="<?php echo isset($single[1208]['allowed_frequency_months'])?$single[1208]['allowed_frequency_months']:''?>">
-					                	<!-- <select class="form-control" name="allowed_frequency_months_single[]">
-					                	<option value="1" <?php echo isset($single[1208]['allowed_frequency_months']) && $single[1208]['allowed_frequency_months']==1?'selected':''?>>Month</option>
-					                	<option value="12" <?php echo isset($single[1208]['allowed_frequency_months']) && $single[1208]['allowed_frequency_months']==12?'selected':''?>>Year</option>
-					                </select> -->
+					                	<input type="text" name="allowed_frequency_months_single[]" class="allowed_frequency_months_new form-control" readonly="" value="<?php echo isset($single[1208]['allowed_frequency_months'])?$single[1208]['allowed_frequency_months']:'Calendar'?>">
+					               
 					            	</th>
-					                <th style="width: 7%">
-					                	 <!-- <select class="form-control" name="coverage_percentage_single[]">
-					                		<option value="0" <?php echo isset($single[1208]['coverage_percentage']) && $single[1208]['coverage_percentage']==0?'selected':''; ?>>0</option>
-					                		<option value="60" <?php echo isset($single[1208]['coverage_percentage']) && $single[1208]['coverage_percentage']==60?'selected':''; ?>>60</option>
-					                		<option value="70" <?php echo isset($single[1208]['coverage_percentage']) && $single[1208]['coverage_percentage']==70?'selected':''; ?>>70</option>
-					                		<option value="80" <?php echo isset($single[1208]['coverage_percentage']) && $single[1208]['coverage_percentage']==80?'selected':''; ?>>80</option>
-					                		<option value="100" <?php echo isset($single[1208]['coverage_percentage']) && $single[1208]['coverage_percentage']==100?'selected':''; ?>>100</option>
-								        </select> -->
+					               <!--  <th style="width: 7%">
 					                	<input type="text" name="coverage_percentage_single[]" class="form-control" value="<?php echo isset($single[1208]['coverage_percentage'])?$single[1208]['coverage_percentage']:''?>">
-					                </th>
-					               <!--  <th><input type="text" name="waiting_single[]" class="form-control" value="<?php echo isset($single[1208]['waiting'])?$single[1208]['waiting']:''?>"></th> -->
-					                <th>%</th>
-					                </tr>
+					                </th> -->
+					               </tr>
 					                <tr>
-					                <th>D1351 <input type="hidden" name="cdt_codes_id_single[]" value="1351"></th>
-					                <th>Sealant per tooth</th>
+					                <th>Sealant <input type="hidden" name="cdt_codes_id_single[]" value="1351"></th>
 					                <th>
 					                	<input type="text" name="to_age_single[]" class="form-control" value="<?php echo isset($single[1351]['to_age'])?$single[1351]['to_age']:''?>">
 					                </th>
-					                <th><input type="text" name="allowed_frequency_single[]" class="form-control" value="<?php echo isset($single[1351]['allowed_frequency'])?$single[1351]['allowed_frequency']:''?>"></th>
-					                 <th>Times in</th>
+					                <th><input type="text" name="allowed_frequency_single[]" class="form-control" value="<?php echo isset($single[1351]['allowed_frequency'])?$single[1351]['allowed_frequency']:'1'?>"></th>
+					                 <th class="text-center">Times in</th>
 					                <th><input type="text" name="allowed_frequency_duration_single[]" class="form-control"  value="<?php echo isset($single[1351]['allowed_frequency_duration_single'])?$single[1351]['allowed_frequency_duration_single']:''?>"></th>
 					                <th>
 					                	<input type="text" name="allowed_frequency_months_single[]" class="allowed_frequency_months_new form-control" readonly="" value="<?php echo isset($single[1351]['allowed_frequency_months'])?$single[1208]['allowed_frequency_months']:''?>">
-					                	<!-- <select class="form-control" name="allowed_frequency_months_single[]">
-						                	<option value="1" <?php echo isset($single[1351]['allowed_frequency_months']) && $single[1351]['allowed_frequency_months']==1?'selected':''?>>Month</option>
-						                	<option value="12" <?php echo isset($single[1351]['allowed_frequency_months']) && $single[1351]['allowed_frequency_months']==12?'selected':''?>>Year</option>
-					                	</select> -->
+					                
 					            	</th>
-					                <th style="width: 7%">
-					                	 <!-- <select class="form-control" name="coverage_percentage_single[]">
-					                		<option value="0" <?php echo isset($single[1351]['coverage_percentage']) && $single[1351]['coverage_percentage']==0?'selected':''; ?>>0</option>
-					                		<option value="60" <?php echo isset($single[1351]['coverage_percentage']) && $single[1351]['coverage_percentage']==60?'selected':''; ?>>60</option>
-					                		<option value="70" <?php echo isset($single[1351]['coverage_percentage']) && $single[1351]['coverage_percentage']==70?'selected':''; ?>>70</option>
-					                		<option value="80" <?php echo isset($single[1351]['coverage_percentage']) && $single[1351]['coverage_percentage']==80?'selected':''; ?>>80</option>
-					                		<option value="100" <?php echo isset($single[1351]['coverage_percentage']) && $single[1351]['coverage_percentage']==100?'selected':''; ?>>100</option>
-								        </select> -->
+					               <!--  <th style="width: 7%">
 					                	<input type="text" name="coverage_percentage_single[]" class="form-control" value="<?php echo isset($single[1351]['coverage_percentage'])?$single[1351]['coverage_percentage']:''?>">
-					                </th>
-					              <!--   <th><input type="text" name="waiting_single[]" class="form-control" value="<?php echo isset($single[1208]['waiting'])?$single[1208]['waiting']:''?>"></th> -->
-					                <th>%</th>
+					                </th> -->
 					                </tr>
 					            </table>
 					            <table class="table table-bordered disabled-input">
@@ -766,34 +766,53 @@
 					                <th>Cdt Groups</th>
 					                <th colspan="3">Allowed Frequency</th>
 					                <th style="width: 13%;"></th>
-					                <th colspan="1">Insurance Covers</th>
-					                <th>Waiting Period</th>
+					              <!--   <th colspan="1">Insurance Covers</th>
+					                <th>Waiting Period</th> -->
 <!-- 					                <td></td>
  -->					                </tr>
 					                <?php
 					                
 					                 foreach ($cdt_codes as $cdtcodes) {
 					                 	if ($cdtcodes['cdtgroups'] !='') {
+
+					                 		$allowed_frequency='';
+					                 		$allowed_frequency_duration='';
+					                 		$allowed_frequency_months='';
+					                 		if ($cdtcodes['cdtgroups']=='Crowns' || $cdtcodes['cdtgroups']=='Denture') {
+					                 			$allowed_frequency=1;
+					                 		}
+					                 		// Surface/filling
+					                 		if ($cdtcodes['cdtgroups']=='Surface/Filling') {
+					                 			$allowed_frequency=1;
+					                 			$allowed_frequency_duration=12;
+					                 			$allowed_frequency_months='selected';
+
+
+					                 		}
 					                  ?>
 					                	<tr class="">
 					                		<input type="hidden" name="cdtid[]" value="<?php echo $cdtcodes['cdtid'];?>">
 					                		<input type="hidden" name="cdtgroups[]" value="<?php echo $cdtcodes['cdtgroups'];?>">
-					                		<input type="hidden" name="coverage_percentage[]" value="<?php echo isset($percentage[$cdtcodes['treatmenttypeid']])?$percentage[$cdtcodes['treatmenttypeid']]:0;?>">
-					                		<input type="hidden" name="waiting[]" value="<?php echo isset($waitingPeriod[$cdtcodes['treatmenttypeid']])?$waitingPeriod[$cdtcodes['treatmenttypeid']]:0;?>">
+					                		<input type="hidden" name="coverage_percentage[]" value="<?php echo isset($percentage[$cdtcodes['treatmenttypeid']])?$percentage[$cdtcodes['treatmenttypeid']]:'';?>">
+					                		<input type="hidden" name="waiting[]" value="<?php echo isset($waitingPeriod[$cdtcodes['treatmenttypeid']])?$waitingPeriod[$cdtcodes['treatmenttypeid']]:'';?>">
 							                <th  class="" ><?php echo $cdtcodes['cdtgroups']; ?></th>
-							                <th style="width: 10%"><input type="text" name="code_allowed_frequency_plan[]" class="form-control" value="<?php echo isset($insurancePlans[$cdtcodes['cdtid']]['allowed_frequency'])?$insurancePlans[$cdtcodes['cdtid']]['allowed_frequency']:0?>"></th>
+							                <th style="width: 10%"><input type="text" name="code_allowed_frequency_plan[]" class="form-control" value="<?php echo isset($insurancePlans[$cdtcodes['cdtid']]['allowed_frequency'])?$insurancePlans[$cdtcodes['cdtid']]['allowed_frequency']:$allowed_frequency?>"></th>
  							                <th>Times in</th>
-							                <th style="width: 10%"><input type="text" name="allowed_frequency_duration[]" class="form-control"  value="<?php echo isset($insurancePlans[$cdtcodes['cdtid']]['allowed_frequency_duration'])?$insurancePlans[$cdtcodes['cdtid']]['allowed_frequency_duration']:0?>"></th>
+							                <th style="width: 10%"><input type="text" name="allowed_frequency_duration[]" class="form-control"  value="<?php echo isset($insurancePlans[$cdtcodes['cdtid']]['allowed_frequency_duration'])?$insurancePlans[$cdtcodes['cdtid']]['allowed_frequency_duration']:$allowed_frequency_duration?>"></th>
  							                <th style="width: 70px;">
-							                	<input type="text" name="allowed_frequency_months[]" class="form-control allowed_frequency_months_new" value="<?php echo $allowed_frequency_months;?>" readonly>
+ 							                	<select class="form-control" name="allowed_frequency_months[]">
+							                		<option value="1" <?php echo isset($insurancePlans[$cdtcodes['cdtid']]['allowed_frequency_months']) && $insurancePlans[$cdtcodes['cdtid']]['allowed_frequency_months']==1?'selected':''?>>Calendar</option>
+							                		<option value="2" <?php echo isset($insurancePlans[$cdtcodes['cdtid']]['allowed_frequency_months']) && $insurancePlans[$cdtcodes['cdtid']]['allowed_frequency_months']==2?'selected':''?>>Plan</option>
+							                	</select>
+							                	<!-- <input type="text" name="allowed_frequency_months[]" class="form-control allowed_frequency_months_new" value="<?php echo $allowed_frequency_months;?>" readonly> -->
 <!-- 							               
  -->							            	</th>
-							                <th style="width: 7%">
+							               <!--  <th style="width: 7%">
 							                	<?php echo isset($percentage[$cdtcodes['treatmenttypeid']])?$percentage[$cdtcodes['treatmenttypeid']]:0;?>%
 							                </th>
 							                <th style="width: 7%">
 							                	<?php echo isset($waitingPeriod[$cdtcodes['treatmenttypeid']])?$waitingPeriod[$cdtcodes['treatmenttypeid']]:0;?>
-							                </th>
+							                </th> -->
 						                </tr>
 					                <?php }
 					                	}
@@ -887,24 +906,31 @@
 							                </tr>
 							                <tr>
 							                <th>Fillings</th>
-							                <th class="text-center">Y</th>
-							                <th class="text-center"><input type="radio" class="text-center" name="filling_downgrades" value="Y" <?php echo isset($plan['filling_downgrades']) && $plan['filling_downgrades']=='Y'?'checked':'' ?>></th>
-							                <th class="text-center">N</th>
-							                <th class="text-center"><input type="radio" class="text-center" name="filling_downgrades" value="N" <?php echo isset($plan['filling_downgrades']) && $plan['filling_downgrades']=='N'?'checked':'' ?>></th>
+							                <th class="text-center">
+							                	<select class="form-control" name="filling_downgrades">
+							                		<option value="N" <?php echo isset($plan['filling_downgrades']) && $plan['filling_downgrades']=='N'?'selected':'' ?>>N</option>
+							                		<option value="Y" <?php echo isset($plan['filling_downgrades']) && $plan['filling_downgrades']=='Y'?'selected':'' ?>>Y</option>
+							                	</select>
+							                </th>
 							                </tr>
 							                <tr>
 							                <th>Crown Molar Downgrades</th>
-							                <th class="text-center">Y</th>
-							                <th class="text-center"><input type="radio" class="text-center" name="crown_molar_downgrades" value="Y" <?php echo isset($plan['crown_molar_downgrades']) && $plan['crown_molar_downgrades']=='Y'?'checked':'' ?>></th>
-							                <th class="text-center">N</th>
-							                <th class="text-center"><input type="radio" class="text-center" name="crown_molar_downgrades" value="N" <?php echo isset($plan['crown_molar_downgrades']) && $plan['crown_molar_downgrades']=='N'?'checked':'' ?>></th>
+							                <th class="text-center">
+							                	<select class="form-control" name="crown_molar_downgrades">
+							                		<option value="N" <?php echo isset($plan['crown_molar_downgrades']) && $plan['crown_molar_downgrades']=='N'?'selected':'' ?>>N</option>
+							                		<option value="Y" <?php echo isset($plan['crown_molar_downgrades']) && $plan['crown_molar_downgrades']=='Y'?'plan':'' ?>>Y</option>
+							                	</select>
+
+							                </th>
 							                </tr>
 							                <tr>
 							                <th>Crown Premolar Downgrades</th>
-							                <th class="text-center">Y</th>
-							                <th class="text-center"><input type="radio" class="text-center" name="crown_premolar_downgrades" value="Y" <?php echo isset($plan['crown_premolar_downgrades']) && $plan['crown_premolar_downgrades']=='Y'?'checked':'' ?>></th>
-							                <th class="text-center">N</th>
-							                <th class="text-center"><input type="radio" class="text-center" name="crown_premolar_downgrades" value="N" <?php echo isset($plan['crown_premolar_downgrades']) && $plan['crown_premolar_downgrades']=='N'?'checked':'' ?>></th>
+							                <th class="text-center">
+							                	<select class="form-control" name="crown_premolar_downgrades">
+							                		<option value="N" <?php echo isset($plan['crown_premolar_downgrades']) && $plan['crown_premolar_downgrades']=='N'?'selected':'' ?>>N</option>
+							                		<option value="Y" <?php echo isset($plan['crown_premolar_downgrades']) && $plan['crown_premolar_downgrades']=='Y'?'selected':'' ?>>Y</option>
+							                	</select>
+							                </th>
 							                </tr>
 							            </table>
 					            	</div> 
@@ -916,18 +942,22 @@
 							                <tr>
 							                <th>D0140 <input type="hidden" name="shares_cdtid[]" value="140"></th>
 							                <th>Limited oral evaluation – problem focused</th>
-							                <th class="text-center">Y</th>
-							                <th class="text-center"><input type="radio" name="shares_freq_limit_exam" class="" value="1" <?php echo isset($shares[140]['shares_freq_limit_exam']) && $shares[140]['shares_freq_limit_exam']==1?'checked':'' ?>></th>
-							                <th class="text-center">N</th>
-							                <th class="text-center"><input type="radio" name="shares_freq_limit_exam" class="" value="0" <?php echo isset($shares[140]['shares_freq_limit_exam']) && $shares[140]['shares_freq_limit_exam']==0?'checked':'' ?>></th>
+							                <th class="text-center">
+							                	<select class="form-control" name="shares_freq_limit_exam">
+							                		<option value="0" <?php echo isset($shares[140]['shares_freq_limit_exam']) && $shares[140]['shares_freq_limit_exam']==0?'selected':'' ?>>N</option>
+							                		<option value="1" <?php echo isset($shares[140]['shares_freq_limit_exam']) && $shares[140]['shares_freq_limit_exam']==1?'selected':'' ?>>Y</option>
+							                	</select>
+							                </th>
 							                </tr>
 							                <tr>
 							                <th>D4910 <input type="hidden" name="shares_cdtid[]" value="4910"></th>
 							                <th>Periodontal maintenance procedures</th>
-							                <th class="text-center">Y</th>
-							                <th class="text-center"><input type="radio" name="shares_freq_perio_maint" class="" value="1" <?php echo isset($shares[4910]['shares_freq_perio_maint']) && $shares[4910]['shares_freq_perio_maint']==1?'checked':'' ?>></th>
-							                <th class="text-center">N</th>
-							                <th class="text-center"><input type="radio" name="shares_freq_perio_maint" class="" value="0" <?php echo isset($shares[4910]['shares_freq_perio_maint']) && $shares[4910]['shares_freq_perio_maint']==0?'checked':'' ?>></th>
+							                <th class="text-center">
+							                	<select class="form-control" name="shares_freq_perio_maint">
+							                		<option value="0" <?php echo isset($shares[4910]['shares_freq_perio_maint']) && $shares[4910]['shares_freq_perio_maint']==0?'selected':'' ?>>N</option>
+							                		<option value="1" <?php echo isset($shares[4910]['shares_freq_perio_maint']) && $shares[4910]['shares_freq_perio_maint']==1?'selected':'' ?>>Y</option>
+							                	</select>
+							                </th>
 							                </tr>
 							                <tr>
 							                	<th colspan="6" style="color: #F5F6FA">None</th>
@@ -946,7 +976,7 @@
 							                <tr>
 							                <th>Lifetime max</th>
 							                <th style="width: 15%">
-							                	 <input type="text" name="orthodontics_lifetime_max" class="form-control" value="<?php echo isset($plan['orthodontics_lifetime_max'])?$plan['orthodontics_lifetime_max']:''?>">
+							                	 <input type="text" name="orthodontics_lifetime_max" class="form-control" value="<?php echo isset($plan['orthodontics_lifetime_max'])?$plan['orthodontics_lifetime_max']:''?>" id='orthodontics_lifetime_max' >
 
 							                </th>
 							                <th>Age Limit</th>
@@ -987,9 +1017,15 @@
 							            </table>
 					             	</div>
 					             </div>
-					             
-					            
 					        </div>
+				          	<table class="table table-bordered">
+				                <tr>
+				                <th colspan="4" class="text-center">Notes</th>
+				                </tr>
+				                <tr>
+				                <th><textarea class="form-control" name="freetexts"><?php echo isset($patient['freetexts'])?$patient['freetexts']:''; ?></textarea></th>					               
+				                </tr>					               
+				           </table>
 					    </div>  
 					    <br>
 					    
@@ -1256,6 +1292,7 @@
 
 	function predeterminationNeeded(e)
 	{	
+		var e = $(e).val();
 		if (e==1) {
 			$("#predetermination-req").attr("readonly", "readonly"); 
 		}else{
@@ -1319,6 +1356,23 @@ function insuranceBenefits(e)
 	}else{
 		$(".effective_date").removeAttr("readonly");
 	}
+}
+
+function subgroupChanges(e)
+{	
+	var groupid= $('#plans-id').val();
+	var subgroupid= $(e).val();
+
+	var weburl = $('meta[name="weburl"]').attr('content');
+	$.get(weburl + 'dashboard/getSubGroup?groupid='+groupid+'&subgroupid='+subgroupid, function (d) {
+		data = JSON.parse(d);
+		$('#orthodontics_lifetime_max').val(data.orthodontics_lifetime_max);
+		$('#ind_limit_annual').val(data.ind_limit_annual);
+		$('#ind_deductible_annual').val(data.ind_deductible_annual);
+		$('#family_deductible_annual').val(data.family_deductible_annual);
+		console.log(data);
+		//$('#plans-id').html(d);
+	});
 }
 
 </script>

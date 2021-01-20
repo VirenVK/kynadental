@@ -231,7 +231,7 @@ class Patient_model extends MY_Model{
 		$this->db->select('c.*');
 		$this->db->from('cdt_codes'.' c');
 		$this->db->where(array('c.cdtgroups !='=>''));
-		$this->db->order_by('c.cdtgroups','asc');
+		$this->db->order_by('c.cdtgroupsorder','asc');
 		$this->db->group_by('c.cdtgroups');
 		$this->db->query("SET sql_mode=(SELECT REPLACE(@@sql_mode, 'ONLY_FULL_GROUP_BY', ''));");
 		$query = $this->db->get();
