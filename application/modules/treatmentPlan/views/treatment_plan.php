@@ -74,7 +74,7 @@
                     <div class="col-sm-10">
                       <?php
                           $attributes = array('id' => '', 'autocomplete'=>'off');
-                          $url=isset($_GET['officeId'])?'dashboard/index?officeId='.$_GET['officeId']:'dashboard/index';
+                          $url=isset($_GET['officeId'])?'treatmentPlan/index?officeId='.$_GET['officeId']:'treatmentPlan/index';
                           echo form_open(WEB_URL.$url, $attributes);
                         ?>
                           <div class="row">
@@ -99,7 +99,7 @@
                           </div>
                           <div class="col-lg-12 px-0">
                             <input type="submit" name="search" value="Search" class="btn btn-primary pl-3 pr-3">
-                            <a href="<?php echo WEB_URL.'dashboard/index'?>" class="btn btn-danger pl-3 pr-3" value="reset" aria-hidden="true"> Reset </a>
+                            <a href="<?php echo WEB_URL.'treatmentPlan/index'?>" class="btn btn-danger pl-3 pr-3" value="reset" aria-hidden="true"> Reset </a>
                       </div>
                     <?php echo form_close();?>
                     </div>
@@ -120,7 +120,7 @@
           </div>
           <div class="row">
             <!-- Earnings (Monthly) Card Example -->
-              <div class="col-xl-6 col-md-6 mb-4">
+              <div class="col-xl-12 col-md-12 mb-4">
               <?php if ($patient_data==1) { ?>
                 <div class="card border-left-success shadow h-100 py-2">
                   <div class="card-body">
@@ -128,12 +128,11 @@
                     <div class="table-responsive">
                       <table class="table table-hover" id="dataTable" width="100%" cellspacing="0">
                         <thead>
-                       <tr> 
+                        <tr> 
                           <th class="border-0">Id</th>
                           <th class="border-0">First Name</th>
                           <th class="border-0">Last Name </th>
                           <th class="border-0">Date of Birth</th>
-                          <th class="border-0 text-center" style="width:120px;">Action</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -141,18 +140,13 @@
                           if(!empty($allpatientdataentry)) {
                             foreach($allpatientdataentry as $pat){
                               ?>
-                              <tr>
+                              <tr onclick="window.location='<?php echo WEB_URL.'treatmentPlan/patientTrtmntPlan?patientid='.$pat['patientid'].'&officeId='.$pat['officeid'];?>'" style="cursor:pointer">
                                 <td><?php echo $pat['patientid']?></td>
                                 <td><?php echo $pat['p_firstname']?></td>
                                 <td><?php echo $pat['p_lastname'];?></td>
                                 <td><?php echo $pat['p_dob'];?></td>
-                                  <td class="text-center">
-                               <a href="<?php echo WEB_URL.'dashboard/editpatient?id='.$pat['patientid'].'&plansid='.$pat['plansid'];?>" class="btn btn-sm btn-outline-primary">
-                                <span class="text">Edit</span>
-                            </a>
-                              </td>
-                                </tr>
-                                <?php
+                              </tr>
+                              <?php
                               }
                             }
                           ?>
@@ -163,50 +157,6 @@
                 </div>
                 <?php } ?>
               </div>
-            <!-- Earnings (Monthly) Card Example -->
-            <div class="col-xl-6 col-md-6 mb-4">
-              <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                  <a href="<?php echo WEB_URL.'dashboard/addNewPatient'?>" class="btn-sm btn-primary" style='float: right;' >Add New Patients</a>
-                   <center><h5>NEW PATIENTS</h5></center>
-                   <div class="table-responsive">
-                    <table class="table table-hover" id="example" width="100%" cellspacing="0">
-                      <thead>
-                      <tr>
-                        <th class="border-0">id</th>
-                        <th class="border-0">First Name</th>
-                        <th class="border-0">Last Name </th>
-                        <th class="border-0">Date of Birth</th>
-                        <th class="border-0 text-center" style="width:120px;">Action</th>
-                      </tr>
-                      </thead>
-                      <tbody>
-                        <?php
-                        if(!empty($allpatient)) {
-                          foreach($allpatient as $emp){
-                            $emp['plansid']= isset($emp['plansid']) && $emp['plansid'] !=''?$emp['plansid']:0;
-                            ?>
-                            <tr>
-                              <td><?php echo $emp['patientid']?></td>
-                              <td><?php echo $emp['p_firstname']?></td>
-                              <td><?php echo $emp['p_lastname'];?></td>
-                              <td><?php echo $emp['p_dob'];?></td>
-                                <td class="text-center">
-                            <a href="<?php echo WEB_URL.'dashboard/editpatient?id='.$emp['patientid'].'&plansid='.$emp['plansid'];?>" class="btn btn-sm btn-outline-primary">
-                                <span class="text">Edit</span>
-                            </a>
-                            </td>
-                              </tr>
-                              <?php
-                            }
-                          }
-                        ?>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
         </div>
         <!-- /.container-fluid -->
       </div>
@@ -217,24 +167,18 @@
   <!-- End of Page Wrapper -->
 </div>
 <script>
-  $( function() {
-    $('.datepicker').datepicker({
-       format: 'mm/dd/yyyy',
-    });
-
-  } );
   $(function(){
     $("#example").dataTable();
 
      $("#changeOffice").change(function(){
      var id = $('#changeOffice').val();
-     window.location.href = "<?php echo WEB_URL.'dashboard/index?officeId='?>"+id;
+     window.location.href = "<?php echo WEB_URL.'treatmentPlan/index?officeId='?>"+id;
     });
 
     $("#treatmentPlan").click(function(){
-    //  var id = $('#changeOffice').val();
+     var id = $('#changeOffice').val();
      window.location.href = "<?php echo WEB_URL.'treatmentPlan/index'?>";
-    });
+    });    
 
     $("#patientBenefits").click(function(){
     //  var id = $('#changeOffice').val();
