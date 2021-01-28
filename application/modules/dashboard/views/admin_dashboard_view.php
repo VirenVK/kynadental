@@ -108,7 +108,7 @@
                          <label for="email">Select Office</label>
                          <select class="form-control" id="changeOffice">
                             <?php foreach ($office as $row) { ?>
-                                <option value="<?php echo $row['officeid']; ?>" <?php echo isset($_GET['officeId']) && $_GET['officeId']==$row['officeid']?'selected':'' ?>><?php echo $row['officename']; ?></option>
+                                <option value="<?php echo $row['officeid']; ?>" <?php echo $this->id_office > 0 && $this->id_office==$row['officeid']?'selected':'' ?>><?php echo $row['officename']; ?></option>
                             <?php } ?>
                           </select>
                       </div>
@@ -227,8 +227,11 @@
     $("#example").dataTable();
 
      $("#changeOffice").change(function(){
-     var id = $('#changeOffice').val();
-     window.location.href = "<?php echo WEB_URL.'dashboard/index?officeId='?>"+id;
+      var id = $('#changeOffice').val();
+      var weburl = $('meta[name="weburl"]').attr('content');
+       $.get(weburl + 'dashboard/setOfficeId?id='+id, function (d) {
+        window.location.href = "<?php echo WEB_URL.'dashboard/index'?>";
+      });
     });
   })
 

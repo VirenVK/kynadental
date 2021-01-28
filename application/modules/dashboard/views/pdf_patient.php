@@ -147,6 +147,14 @@ th{
   border-radius: 0.35rem;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
+.font-size{
+      font-weight: normal!important;
+      text-align: center;
+}
+input{
+  height: 10px;
+  margin-top: -4px
+}
 </style>
 <!-- Begin Page Content -->
   <!-- Page Heading -->
@@ -201,8 +209,10 @@ th{
    width: 100%;
    font-size: 10px;
    text-align: center;">
-      <img src="<?php echo ROOT_PATH.'uploads/pdf-logo.png'?>" style="height: 115px;width:140px;float: left;margin-right: 10px;" >
-
+    <?php
+    if ($officeName['logo'] !='') { ?>
+        <img src="<?php echo ROOT_PATH.$officeName['logo']?>" style="height: 100px;width:170px;float: left;margin-right: 10px;" >
+    <?php } ?>
    <!-- ROOT_PATH -->
      <center style='font-size: 45px;margin-right: 30px' ><?php echo isset($officeName['officename'])?$officeName['officename']:'' ?></center>
      <center style='font-size: 20px;margin-right: 30px'><u>BENEFITS BREAKDOWN</u></center>
@@ -213,73 +223,75 @@ th{
 <br>
   <span style="float: right;margin-top: -20px;font-size: 10px">Date Verifiled: <?php echo isset($agent['createdon'])?getDateFormatted($agent['createdon'],'m/d/y'):''?>  Agent Name: <?php echo isset($agent['insurance_agentname'])?$agent['insurance_agentname']:''?> @ <?php echo isset($agent['createdon'])?date('h:i',strtotime($agent['createdon'])):''?></span>
 <div style="width: 100%;" >
-<table class="table table-bordered">
+<table class="table table-bordered" style="margin-right: -25px">
 <tr>
-<th>Patient Name</th>
-<th><?php echo $patient['p_firstname'].' '.$patient['p_lastname']?></th>
-<th>DOB</th>
-<th><?php echo getDateFormatted($patient['p_dob'],'m/d/y')?></th>
-<th>Subscriber's Name</th>
+<th>Patient Name :</th>
+<th class="font-size"><?php echo $patient['p_firstname'].' '.$patient['p_lastname']?></th>
+<th>DOB :</th>
+<th class="font-size"><?php echo getDateFormatted($patient['p_dob'],'m/d/y')?></th>
+<th>Subscriber's Name :</th>
  <?php
   //$patient['p_firstname']==$patient['s_firstname']
     if ($patient['p_firstname']==$patient['s_firstname'] && $patient['p_lastname']==$patient['s_lastname']) { ?>
-      <th>Same as Patient</th>
+      <th class="font-size">Same as Patient</th>
   <?php
     }else{ ?>
-      <th><?php echo $patient['s_firstname'].' '.$patient['s_lastname'] ?></th>
+      <th class="font-size"><?php echo $patient['s_firstname'].' '.$patient['s_lastname'] ?></th>
   <?php
     }
   ?>
-  <th>DOB</th> 
+  <th>DOB :</th> 
   <?php
   //$patient['p_firstname']==$patient['s_firstname']
     if ($patient['p_firstname']==$patient['s_firstname'] && $patient['p_lastname']==$patient['s_lastname']) { ?>
-      <th>Same as Patient</th>
+      <th class="font-size">Same as Patient</th>
       
   <?php
     }else{ ?>
-      <th><?php echo getDateFormatted($patient['s_dob'],'m/d/y')?></th>
+      <th class="font-size"><?php echo getDateFormatted($patient['s_dob'],'m/d/y')?></th>
   <?php
     }
   ?>  
+</tr>
+</table>
+<table class="table table-bordered" style="margin-right: -25px">
+<tr>
+<th style="width: 10px">Employer :</th>
+<th style="font-weight: normal!important;float: left;">
+  <?php foreach ($employers as $pRow) { ?>
+    <?php echo isset($plan['employer_id']) && $plan['employer_id'] == $pRow['employerid']?$pRow['employersname']:''; ?>
+  <?php } ?>
+</th>
+<th style="width: 10px">Insurance :</th>
+<th style="font-weight: normal!important;float: left;">
+  <?php foreach ($insurance as $iRow) { ?>
+    <?php echo isset($plan['insurance_id']) && $plan['insurance_id']==$iRow['insurance_id']?$iRow['insurancename']:''; ?>
+  <?php } ?></th>
 </tr>
 </table>
 </div>
 
 <div style="width: 100%; top: 100;">
 <div style="width: 38%; float:left">
-<table class="table table-bordered">	            	
-	<tr>
-    <th>Employer:</th>   
-    <th>
-        <?php foreach ($employers as $pRow) { ?>
-           	<?php echo isset($plan['employer_id']) && $plan['employer_id'] == $pRow['employerid']?$pRow['employersname']:''; ?>
-       <?php } ?>
-    </th>
-    </tr>
-    <tr>
-    <th>Insurance:</th>
-    <th>
-    	<?php foreach ($insurance as $iRow) { ?>
-    		<?php echo isset($plan['insurance_id']) && $plan['insurance_id']==$iRow['insurance_id']?$iRow['insurancename']:''; ?>
-    	<?php } ?>
-    </th>
-    </tr>
-     <tr>
-    <th>Group #:</th>   
-    <th>
+<table class="table table-bordered" >	            	
+  <tr>
+    <th>Group#:</th>   
+    <th class="font-size">
         <?php foreach ($insurance_plans as $pRow) { ?>
            	<?php echo isset($plan['insurance_plans_id']) && $plan['insurance_plans_id']==$pRow['insurance_plans_id']?$pRow['groupid']:''; ?>
+        <?php } ?>
+        <?php foreach ($plansgroup as $gRow) { ?>
+          <?php echo isset($patientInsurance['subgroupid']) && $patientInsurance['subgroupid']==$gRow['subgroupid']?'- '.$gRow['subgroup']:''; ?>
         <?php } ?>
     </th>
     </tr>
     <tr>
     <th>Product Id:</th>
-    <th><?php echo isset($plan['productid'])?$plan['productid']:''; ?></th>
+    <th class="font-size"><?php echo isset($plan['productid'])?$plan['productid']:''; ?></th>
     </tr>
     <tr>
     <th>Fee Schedule:</th>
-    <th>
+    <th class="font-size">
         <?php foreach ($feeschedule as $fRow) { ?>
            	<?php echo isset($plan['feescheduleid']) && $plan['feescheduleid']==$fRow['feescheduleid']?$fRow['name']:''; ?>
         <?php } ?>
@@ -287,86 +299,97 @@ th{
     </tr>
     <tr>
     <th>Member Id:</th>
-    <th><?php echo isset($patientInsurance['memberid'])?$patientInsurance['memberid']:''; ?></th>
+    <th class="font-size"><?php echo isset($patientInsurance['memberid'])?$patientInsurance['memberid']:''; ?></th>
     </tr>
     <tr>
     <th>Effective Date:</th>   
-    <th><?php echo getDateFormatted(isset($patientInsurance['effective_date'])?$patientInsurance['effective_date']:'','m/d/y') ?></th>
+    <th class="font-size"><?php echo getDateFormatted(isset($patientInsurance['effective_date'])?$patientInsurance['effective_date']:'','m/d/y') ?></th>
     </tr>
     <tr>
     <th>Insurance cover</th>   
-    <th class="disabled-input">
+    <th class="font-size">
     	<?php echo isset($plan['insurance_benefits']) && $plan['insurance_benefits']=='plan'?'Plan Month':'Calendar Month'; ?>
     </th>
     </tr>
 </table>
 					            
-<table class="table table-bordered">
+
+					           
+<table class="table table-bordered disabled-input" style="margin-top: -10px">
     <tr>
-    <th style="text-align: center !important;">Insurance Benefits Details</th>
+    <th col>Missing Tooth Clause</th>
+    <th class="font-size" style="width: 40px"><?php echo isset($plan['missing_tooth_clause']) && $plan['missing_tooth_clause']=='1'?'Yes':'No' ?></th>
+    </tr>
+    <tr>
+    <th>Predetermination Needed</th>
+    <th class="font-size"><?php echo isset($plan['predetermination_needed']) && $plan['predetermination_needed']=='1'?'Yes':'No' ?></th>
+    </tr>
+    <tr>
+    <th>Recommended Above</th>
+    <th class="font-size" colspan="">$<?php echo isset($plan['predetermination_needed'])?$plan['predetermination_needed']:''?></th>
+    </tr>
+</table>	
+  <div style="width: 100%;">
+    <div style="width: 50%;float: left;">
+
+      <table class="table table-bordered" style="margin-top: -10px">
+    <tr>
+    <th>Insurance Benefits</th>
     <th></th>
     </tr>
     <tr>
     <th>Maximum</th>   
-    <th class="disabled-input">$<?php echo isset($plan['ind_limit_annual'])?$plan['ind_limit_annual']:''; ?></th>
+    <th class="font-size">$<?php echo isset($getsubgroup['ind_limit_annual'])?floatval($getsubgroup['ind_limit_annual']):''; ?></th>
     </tr>
     <tr>
     <th>Remaining</th>
-    <th>$<?php echo isset($patientInsurance['ins_benefit_remaining'])?$patientInsurance['ins_benefit_remaining']:''; ?></th>
+    <th class="font-size">$<?php echo isset($patientInsurance['ins_benefit_remaining'])?$patientInsurance['ins_benefit_remaining']:''; ?></th>
     </tr>
     <tr>
     <th style="text-align: center !important;">Deductions</th> 
     <th></th>  
     </tr>
     <tr>
-    <th>Individual Deductions</th>   
-    <th class="disabled-input">$<?php echo isset($plan['ind_deductible_annual'])?$plan['ind_deductible_annual']:''; ?></th>
+    <th>Individual</th>   
+    <th class="font-size">$<?php echo isset($getsubgroup['ind_deductible_annual'])?floatval($getsubgroup['ind_deductible_annual']):''; ?></th>
     </tr>
     <tr>
     <th>Remaining</th>   
-    <th>$<?php echo isset($patientInsurance['ind_ded_remaining'])?$patientInsurance['ind_ded_remaining']:''; ?></th>
+    <th class="font-size">$<?php echo isset($patientInsurance['ind_ded_remaining'])?$patientInsurance['ind_ded_remaining']:''; ?></th>
     </tr>
     <tr>
-    <th>Family Deduction</th>   
-    <th class="disabled-input">$<?php echo isset($plan['family_deductible_annual'])?$plan['family_deductible_annual']:''; ?></th>
+    <th>Family</th>   
+    <th class="font-size">$<?php echo isset($getsubgroup['family_deductible_annual'])?floatval($getsubgroup['family_deductible_annual']):''; ?></th>
     </tr>
     <tr>
     <th>Remaining</th>   
-    <th>$<?php echo isset($patientInsurance['family_ded_remaining'])?$patientInsurance['family_ded_remaining']:''; ?></th>
+    <th class="font-size">$<?php echo isset($patientInsurance['family_ded_remaining'])?$patientInsurance['family_ded_remaining']:''; ?></th>
     </tr>
 </table>
-					           
-<table class="table table-bordered disabled-input">
-    <tr>
-    <th col>Missing Tooth Clause</th>
-    <th style="width: 40px"><?php echo isset($plan['missing_tooth_clause']) && $plan['missing_tooth_clause']=='1'?'Y':'N' ?></th>
-    </tr>
-    <tr>
-    <th>Predetermination Needed</th>
-    <th><?php echo isset($plan['predetermination_needed']) && $plan['predetermination_needed']=='1'?'Y':'N' ?></th>
-    </tr>
-    <tr>
-    <th>Recommended Above</th>
-    <th colspan="">$<?php echo isset($plan['predetermination_needed'])?$plan['predetermination_needed']:''?></th>
-    </tr>
-</table>	
-  <div style="width: 100%">
-    <div style="width: 50%;float: left;">
-      <table class="table table-bordered disabled-input">
+
+    </div>
+    <div style="width: 48%;float: right;">
+      <table class="table table-bordered disabled-input" style="margin-top: -10px">
       <tr>
-      <th colspan="5" style="text-align: center !important;">Downgrades</th>
+      <th colspan="2" style="text-align: center !important;">Orthodontics</th>
       </tr>
       <tr>
-      <th colspan="4">Fillings</th>
-      <th><?php echo isset($plan['filling_downgrades']) && $plan['filling_downgrades']=='Y'?'Y':'N' ?></th>
-      </tr>
+      <th>Lifetime M.</th>
+      <th style="text-align: center !important;" class="font-size">
+        <?php echo isset($getsubgroup['orthodontics_lifetime_max'])?'$'.floatval($getsubgroup['orthodontics_lifetime_max']):''?>
+      </th>
+    </tr>
+    <tr>
+      <th>Age Limit</th>
+      <th style="text-align: center !important;" class="font-size">
+        <?php echo isset($plan['orthodontics_agelimit'])?$plan['orthodontics_agelimit']:''?>
+      </th>
+    </tr>
       <tr>
-      <th colspan="4">Crown Molar</th>
-      <th><?php echo isset($plan['crown_downgrades']) && $plan['crown_downgrades']=='Y'?'Y':'N' ?></th>
-      </tr>
-      <tr>
-      <th colspan="4">Crown Premolar</th>
-      <th><?php echo isset($plan['crown_premolar_downgrades']) && $plan['crown_premolar_downgrades']=='Y'?'Y':'N' ?></th>
+      <th>Ded. Applies</th>
+      <th style="text-align: center !important;" class="font-size">
+        <?php echo isset($plan['orthodontics_deduction_applies']) && $plan['orthodontics_deduction_applies']=='Y'?'Yes':'No'?>
+        </th>
       </tr>
     </table>
     <?php
@@ -380,66 +403,70 @@ th{
       }
     }
     ?>
-     <table class="table table-bordered disabled-input">
+     <table class="table table-bordered disabled-input" style="margin-top: -10px">
         <tr>
         <th colspan=2 style="text-align: center !important;">Shares Frequency</th>
         </tr>
         <tr>
         <th>Limited Eval</th>
-        <th><?php echo isset($shares[140]['shares_freq_limit_exam']) && $shares[140]['shares_freq_limit_exam']==1?'Y':'N' ?></th>
+        <th style="text-align: center !important;" class="font-size"><?php echo isset($shares[140]['shares_freq_limit_exam']) && $shares[140]['shares_freq_limit_exam']==1?'Yes':'No' ?></th>
         </tr>
         <tr>
         <th>Perio Maint</th>
-        <th><?php echo isset($shares[4910]['shares_freq_perio_maint']) && $shares[4910]['shares_freq_perio_maint']==1?'Y':'N' ?></th>
+        <th style="text-align: center !important;" class="font-size"><?php echo isset($shares[4910]['shares_freq_perio_maint']) && $shares[4910]['shares_freq_perio_maint']==1?'Yes':'No' ?></th>
         </tr>
     </table> 
-
-    </div>
-    <div style="width: 50%;float: right;">
-          <table class="table table-bordered disabled-input">
-      <tr>
-      <th colspan="2" style="text-align: center !important;">Orthodontics</th>
-      </tr>
-      <tr>
-      <th>Lifetime max</th>
-      <th style="width: 15%">
-        <?php echo isset($plan['orthodontics_lifetime_max'])?$plan['orthodontics_lifetime_max']:''?>
-      </th>
-    </tr>
-    <tr>
-      <th>Age Limit</th>
-      <th style="width: 15%">
-        <?php echo isset($plan['orthodontics_agelimit'])?$plan['orthodontics_agelimit']:''?>
-      </th>
-    </tr>
-      <tr>
-      <th>Ded. Applies</th>
-      <th style="width: 14%">
-        <?php echo isset($plan['orthodontics_deduction_applies']) && $plan['orthodontics_deduction_applies']=='Y'?'Y':'N'?>
-        </th>
-      </tr>
-    </table>
-    
-    <table class="table table-bordered disabled-input">
-    <tr>
-    <th colspan="5" style="text-align: center !important;">Payment</th>
-    </tr>
-    <tr>
-    <th>Crown</th>
-    <th colspan="4">
-      <?php
-       echo isset($plan['crown_payment']) && $plan['crown_payment']=='P'?'Preparation':'Seating' ?>
-    </th>
-  
-    </tr>
-    <tr>
-    <th>Orthod.</th>
-    <th colspan="4">
-      <?php echo isset($plan['orthodontics_payment']) && $plan['orthodontics_payment']==1?'Monthly':'Quarterly'?>
-    </tr>
-  </table>
     </div>
   </div>
+  <div style="width: 100%">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+      <table class="table table-bordered disabled-input" style="margin-top: -20px"  >
+      <tr>
+      <th colspan="5" style="text-align: center !important;">Downgrades</th>
+      </tr>
+      <tr>
+      <th></th>
+      <th colspan="2">Fillings</th>
+      <th colspan="2">Crown</th>
+      </tr>
+      <tr>
+      <th colspan="">Molar</th>
+      <th colspan="2" class="font-size"><?php echo isset($plan['filling_molar_downgrades']) && $plan['filling_molar_downgrades']=='Y'?'Yes':'No' ?></th>
+      <th colspan="2" class="font-size"><?php echo isset($plan['crown_molar_downgrades']) && $plan['crown_molar_downgrades']=='Y'?'Yes':'No' ?></th>
+      </tr>
+      <tr>
+      <th colspan="">Premolar</th>
+      <th colspan="2" class="font-size"><?php echo isset($plan['filling_premolar_downgrades']) && $plan['filling_premolar_downgrades']=='Y'?'Yes':'No' ?></th>
+      <th colspan="2" class="font-size"><?php echo isset($plan['crown_premolar_downgrades']) && $plan['crown_premolar_downgrades']=='Y'?'Yes':'No' ?></th>
+      </tr>
+    </table>
+     <table class="table table-bordered disabled-input" style="margin-top: -10px">
+        <tr>
+        <th colspan="5" style="text-align: center !important;">Payment</th>
+        </tr>
+        <tr>
+        <th>Crown</th>
+        <th colspan="" class="font-size">
+          <?php
+           echo isset($plan['crown_payment']) && $plan['crown_payment']=='P'?'Preparation':'Seating' ?>
+        </th>
+        <th>Orthodontics</th>
+        <th class="font-size"><?php echo isset($plan['orthodontics_payment']) && $plan['orthodontics_payment']==1?'Monthly':'Quarterly'?></th>
+        </tr>
+      </table>
+</div>
+</div>
+
 </div>
 <div style="width: 60%; float:right">
    	<table class="table table-bordered">
@@ -454,19 +481,19 @@ th{
         <th colspan="">Waiting</th>
         </tr>
         <tr>
-            <th>Preventive/<br>Diagnostics</th>
-            <th style="width: 5%"><?php echo isset($plan['preventive_percentage'])?$plan['preventive_percentage']:''?> %</th>
-            <th><input type="checkbox" name="preventive_deduction_applies" value="Y" <?php echo isset($plan['preventive_deduction_applies']) && $plan['preventive_deduction_applies']=='Y'?'checked':'' ?>></th>
-            <th style="width: 5%">
+            <th>Prev/Diag</th>
+            <th style="width: 5%" class="font-size"><?php echo isset($plan['preventive_percentage'])?$plan['preventive_percentage']:''?> %</th>
+            <th ><input type="checkbox" name="preventive_deduction_applies" value="Y" <?php echo isset($plan['preventive_deduction_applies']) && $plan['preventive_deduction_applies']=='Y'?'checked':'' ?>></th>
+            <th style="width: 5%" class="font-size">
                   <?php for ($i=0; $i < 25 ; $i++) { ?>
                     <?php echo isset($plan['preventive_waitingperiod']) && $plan['preventive_waitingperiod']==$i?$i:''?>
                   <?php } ?>
             </th> 
 
-             <th>Restorative<br> Anterior </th>
-            <th  style="width: 5%"><?php echo isset($plan['restorative_ant_percentage'])?$plan['restorative_ant_percentage']:''?> %</th>
+             <th>Rest-Ant</th>
+            <th  style="width: 5%" class="font-size"><?php echo isset($plan['restorative_ant_percentage'])?$plan['restorative_ant_percentage']:''?> %</th>
             <th><input type="checkbox" name="restorative_post_ded_applies" value="Y" <?php echo isset($plan['restorative_post_ded_applies']) && $plan['restorative_post_ded_applies']=='Y'?'checked':'' ?>></th>
-             <th style="width: 5%">
+             <th style="width: 5%" class="font-size">
               <?php for ($i=0; $i < 25 ; $i++) { ?>
                 <?php echo isset($plan['restorative_int_waitingperiod']) && $plan['restorative_int_waitingperiod']==$i?$i:''?>
               <?php } ?>
@@ -474,18 +501,18 @@ th{
           
         </tr>                  
         <tr>
-            <th>Perio<br> Maintenance</th>
-            <th><?php echo isset($plan['periomaint_percentage'])?$plan['periomaint_percentage']:''?>%</th>
+            <th>Perio Maint.</th>
+            <th class="font-size"><?php echo isset($plan['periomaint_percentage'])?$plan['periomaint_percentage']:''?>%</th>
              <th><input type="checkbox" name="perio_maintenance_ded_applies" value="Y" <?php echo isset($plan['perio_maintenance_ded_applies']) && $plan['perio_maintenance_ded_applies']=='Y'?'checked':'' ?>></th>
-            <th style="width: 10%">
+            <th style="width: 10%" class="font-size">
               <?php for ($i=0; $i < 25 ; $i++) { ?>
                 <?php echo isset($plan['periomaint_waitingperiod']) && $plan['periomaint_waitingperiod']==$i?$i:''?>         
               <?php } ?>
             </th>  
             <th>Periodontics</th>
-            <th  style="width: 5%"><?php echo isset($plan['periodontics_percentage'])?$plan['periodontics_percentage']:''?>%</th>
+            <th  style="width: 5%" class="font-size"><?php echo isset($plan['periodontics_percentage'])?$plan['periodontics_percentage']:''?>%</th>
             <th><input type="checkbox" name="periodontics_deduction_applies" value="Y" <?php echo isset($plan['periodontics_deduction_applies']) && $plan['periodontics_deduction_applies']=='Y'?'checked':'' ?>></th>
-             <th style="width: 5%">
+             <th style="width: 5%" class="font-size">
                     <?php for ($i=0; $i < 25 ; $i++) { ?>
                         <?php echo isset($plan['periodontics_waitingperiod']) && $plan['periodontics_waitingperiod']==$i?$i:''?>
                     <?php } ?>
@@ -493,55 +520,55 @@ th{
       </tr>
         <tr>
           <th>Endodontics</th>
-            <th  style="width: 5%"><?php echo isset($plan['endodontics_percentage'])?$plan['endodontics_percentage']:''?>%</th>
+            <th  style="width: 5%" class="font-size"><?php echo isset($plan['endodontics_percentage'])?$plan['endodontics_percentage']:''?>%</th>
             <th><input type="checkbox" name="endodontic_deduction_applies" value="Y" <?php echo isset($plan['endodontic_deduction_applies']) && $plan['endodontic_deduction_applies']=='Y'?'checked':'' ?>></th>
-             <th style="width: 5%">
+             <th style="width: 5%" class="font-size">
               <?php for ($i=0; $i < 25 ; $i++) { ?>
                 <?php echo isset($plan['endodontics_waitingperiod']) && $plan['endodontics_waitingperiod']==$i?$i:''?>
               <?php } ?>
             </th>
             
-          <th>Implants<br> Services</th>
-            <th  style="width: 5%"><?php echo isset($plan['implants_percentage'])?$plan['implants_percentage']:''?> %</th>
+          <th>Implants</th>
+            <th  style="width: 5%" class="font-size"><?php echo isset($plan['implants_percentage'])?$plan['implants_percentage']:''?> %</th>
             <th><input type="checkbox" name="implants_ded_applies" value="Y" <?php echo isset($plan['implants_ded_applies']) && $plan['implants_ded_applies']=='Y'?'checked':'' ?>></th>
-             <th style="width: 5%">
+             <th style="width: 5%" class="font-size">
               <?php for ($i=0; $i < 25 ; $i++) { ?>
                 <?php echo isset($plan['implant_waitingperiod']) && $plan['implant_waitingperiod']==$i?$i:''?>
               <?php } ?>
             </th>
         </tr>
-      <tr>
+     <!--  <tr>
       <th>Basic</th>
-      <th><?php echo isset($plan['basic_percentage'])?$plan['basic_percentage']:''?>%</th>
+      <th class="font-size"><?php echo isset($plan['basic_percentage'])?$plan['basic_percentage']:''?>%</th>
       <th><input type="checkbox" name="basic_ded_applies" value="Y" <?php echo isset($plan['basic_ded_applies']) && $plan['basic_ded_applies']=='Y'?'checked':'' ?>></th>
-       <th style="width: 10%">
+       <th style="width: 10%" class="font-size">
           <?php for ($i=0; $i < 25 ; $i++) { ?>
             <?php echo isset($plan['basic_waitingperiod']) && $plan['endodontics_waitingperiod']==$i?$i:''?>
           <?php } ?>
-    </th>
+        </th>
       
       <th>Major</th>
-      <th><?php echo isset($plan['major_percentage'])?$plan['major_percentage']:''?>%</th>
+      <th class="font-size"><?php echo isset($plan['major_percentage'])?$plan['major_percentage']:''?>%</th>
       <th><input type="checkbox" name="major_ded_applies" value="Y" <?php echo isset($plan['major_ded_applies']) && $plan['major_ded_applies']=='Y'?'checked':'' ?>></th>
-       <th style="width: 10%">
+       <th style="width: 10%" class="font-size">
           <?php for ($i=0; $i < 25 ; $i++) { ?>
             <?php echo isset($plan['major_waitingperiod']) && $plan['major_waitingperiod']==$i?$i:''?>
           <?php } ?>
     </th>
-    </tr>
+    </tr> -->
     <tr>
-      <th>Restorative <br> Posterior</th>
-      <th><?php echo isset($plan['restorative_post_percentage'])?$plan['restorative_post_percentage']:''?>%</th>
+      <th>Rest-Post</th>
+      <th class="font-size"><?php echo isset($plan['restorative_post_percentage'])?$plan['restorative_post_percentage']:''?>%</th>
         <th><input type="checkbox" name="restorative_post_ded_applies" value="Y" <?php echo isset($plan['restorative_post_ded_applies']) && $plan['restorative_post_ded_applies']=='Y'?'checked':'' ?>></th>
-       <th style="width: 10%">
+       <th style="width: 10%" class="font-size">
           <?php for ($i=0; $i < 25 ; $i++) { ?>
             <?php echo isset($plan['restorative_post_waitingperiod']) && $plan['restorative_post_waitingperiod']==$i?$i:''?>
           <?php } ?>
     </th>
-      <th>Oral<br> Surgery</th>
-        <th  style="width: 5%"><?php echo isset($plan['oralsurgery_percentage'])?$plan['oralsurgery_percentage']:''?> %</th>
+      <th>Oral Surgery</th>
+        <th  style="width: 5%" class="font-size"><?php echo isset($plan['oralsurgery_percentage'])?$plan['oralsurgery_percentage']:''?> %</th>
          <th><input type="checkbox" name="oralsurgery_ded_applies" value="Y" <?php echo isset($plan['oralsurgery_ded_applies']) && $plan['oralsurgery_ded_applies']=='Y'?'checked':'' ?>></th>
-         <th style="width: 5%">
+         <th style="width: 5%" class="font-size">
           <?php for ($i=0; $i < 25 ; $i++) { ?>
             <?php echo isset($plan['oralsurgery_waitingperiod']) && $plan['oralsurgery_waitingperiod']==$i?$i:''?>
             <?php } ?>
@@ -550,9 +577,9 @@ th{
     <tr>
      
       <th>Orthodontics</th>
-        <th  style="width: 5%"><?php echo isset($plan['orthodontics_percentage'])?$plan['orthodontics_percentage']:''?> %</th>
+        <th  style="width: 5%" class="font-size"><?php echo isset($plan['orthodontics_percentage'])?$plan['orthodontics_percentage']:''?> %</th>
          <th><input type="checkbox" name="orthodontics_deduction_applies" value="Y" <?php echo isset($plan['orthodontics_deduction_applies']) && $plan['orthodontics_deduction_applies']=='Y'?'checked':'' ?>></th>
-         <th style="width: 5%">
+         <th style="width: 5%" class="font-size">
           <?php for ($i=0; $i < 25 ; $i++) { ?>
             <?php echo isset($plan['orthodontics_waitingperiod']) && $plan['orthodontics_waitingperiod']==$i?$i:''?>
           <?php } ?>
@@ -560,11 +587,12 @@ th{
     </tr>
 </table>
 
- <table class="table table-bordered disabled-input">
+ <table class="table table-bordered disabled-input" style="margin-right: -25px">
   <tr>
     <th>Description</th>
     <th>Up to<br> Age</th>
-    <th colspan="4">Allowed Frequency</th>
+    <th colspan="3">Allowed Frequency</th>
+    <th>Months</th>
     <th>Insurance <br>Covers</th>
     </tr>
 
@@ -597,40 +625,40 @@ th{
     ?>
     <tr>
    <th>Fluoride</th>
-    <th>
+    <th class="font-size">
     	<?php echo isset($single[1208]['to_age'])?$single[1208]['to_age']:''?>
     </th>
-    <th><?php echo isset($single[1208]['allowed_frequency'])?$single[1208]['allowed_frequency']:''?></th>
+    <th class="font-size"><?php echo isset($single[1208]['allowed_frequency'])?$single[1208]['allowed_frequency']:''?></th>
     <th>Times in</th>
-    <th><?php echo isset($single[1208]['allowed_frequency_duration_single'])?$single[1208]['allowed_frequency_duration_single']:''?></th>
-    <th>
+    <th class="font-size"><?php echo isset($single[1208]['allowed_frequency_duration_single'])?$single[1208]['allowed_frequency_duration_single']:''?></th>
+    <th class="font-size">
     	<?php echo isset($single[1208]['allowed_frequency_months'])?$single[1208]['allowed_frequency_months']:''?>
 	</th>
-    <th>
+    <th class="font-size">
     	<?php echo isset($single[1208]['coverage_percentage'])?$single[1208]['coverage_percentage']:''?>
     </th>
     </tr>
     <tr>
     <th>Sealant</th>
-    <th>
+    <th class="font-size">
     	<?php echo isset($single[1351]['to_age'])?$single[1351]['to_age']:''?>
     </th>
-    <th><?php echo isset($single[1351]['allowed_frequency'])?$single[1351]['allowed_frequency']:''?></th>
+    <th class="font-size"><?php echo isset($single[1351]['allowed_frequency'])?$single[1351]['allowed_frequency']:''?></th>
      <th>Times in</th>
-    <th><?php echo isset($single[1351]['allowed_frequency_duration_single'])?$single[1351]['allowed_frequency_duration_single']:''?></th>
-    <th>
+    <th class="font-size"><?php echo isset($single[1351]['allowed_frequency_duration_single'])?$single[1351]['allowed_frequency_duration_single']:''?></th>
+    <th class="font-size">
     	<?php echo isset($single[1351]['allowed_frequency_months'])?$single[1208]['allowed_frequency_months']:''?>
 	</th>
-    <th style="width: 7%">
+    <th style="width: 7%" class="font-size">
     	<?php echo isset($single[1351]['coverage_percentage'])?$single[1351]['coverage_percentage']:''?>
     </th>
     </tr>
 </table>
-<table class="table table-bordered disabled-input">
+<table class="table table-bordered disabled-input" style="margin-right: -25px">
     <tr>
-      <th>Cdt Groups</th>
-      <th colspan="3" style="width: 30%">Allowed <br>Frequency</th>
-      <th style="width: 40%"></th>
+      <th >Cdt Groups</th>
+      <th colspan="3">Allowed Freq.</th>
+      <th>Months</th>
       <th>Covers</th>
       <th>Waiting<br> Period</th>
     </tr>
@@ -639,15 +667,15 @@ th{
   if ($cdtcodes['cdtgroups'] !='') {
   ?>
   <tr class="">
-    <th><?php echo $cdtcodes['cdtgroups']; ?></th>
-    <th style="width: 10%"><?php echo isset($insurancePlans[$cdtcodes['cdtid']]['allowed_frequency'])?$insurancePlans[$cdtcodes['cdtid']]['allowed_frequency']:0?></th>
-    <th style="width: 15%">Times<br> in</th>
-    <th style="width: 10%"><?php echo isset($insurancePlans[$cdtcodes['cdtid']]['allowed_frequency_duration'])?$insurancePlans[$cdtcodes['cdtid']]['allowed_frequency_duration']:0?></th>
-    <th style="width: 70px;"><?php echo $allowed_frequency_months;?></th>
-    <th style="width: 7%">
+    <th st><?php echo $cdtcodes['cdtgroups']; ?></th>
+    <th style="width: 10%" class="font-size"><?php echo isset($insurancePlans[$cdtcodes['cdtid']]['allowed_frequency'])?$insurancePlans[$cdtcodes['cdtid']]['allowed_frequency']:0?></th>
+    <th style="width: 20%">Times in</th>
+    <th style="width: 10%" class="font-size"><?php echo isset($insurancePlans[$cdtcodes['cdtid']]['allowed_frequency_duration'])?$insurancePlans[$cdtcodes['cdtid']]['allowed_frequency_duration']:0?></th>
+    <th style="width: 70px;" class="font-size"><?php echo $allowed_frequency_months;?></th>
+    <th style="width: 7%" class="font-size">
       <?php echo isset($percentage[$cdtcodes['treatmenttypeid']])?$percentage[$cdtcodes['treatmenttypeid']]:0;?>%
     </th>
-    <th style="width: 7%">
+    <th style="width: 7%" class="font-size">
       <?php echo isset($waitingPeriod[$cdtcodes['treatmenttypeid']])?$waitingPeriod[$cdtcodes['treatmenttypeid']]:0;?>
     </th>
   </tr>
@@ -678,7 +706,7 @@ th{
    text-align: center;">
 
   <p>This report is for information purposes only and is derived from the payer indicated above and is not a guarantee of payment
-    <span style="float: right;">Date Reised : <?php echo $patient['lastupdate']?></span>
+    <span style="float: right;">Date Revised : <?php echo $patient['lastupdate']?></span>
   </p>
 
 </div>

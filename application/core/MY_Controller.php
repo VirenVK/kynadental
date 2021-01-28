@@ -13,6 +13,7 @@ class MY_Controller extends CI_Controller{
 		}
 		$this->id_user_role = $this->session->userdata('id_role');
 		$this->id_user = $this->session->userdata('id_user');
+		$this->id_office = $this->session->userdata('officeid');
 		$this->id_user_type = $this->session->userdata('id_user_type');
 		if(!$this->checkMethodAccess($arg)){
 			redirect(WEB_URL.'dashboard/index');

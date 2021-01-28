@@ -1,6 +1,7 @@
 <!-- Begin Page Content -->
 <div class="container-fluid">
   <!-- Page Heading -->
+
 	<?php 
   	$attributes = array('id' => 'myform','enctype'=>'multipart/form-data');
 	echo form_open(WEB_URL.'dashboard/addNewPatient',$attributes);?>
@@ -115,7 +116,7 @@
 				                        </select>
 					                </th>
 					                <th><b>-</b> <span style="float: right;color: #9c9fb3">Sub-Group:</span></th>   
-					                <th colspan="" class="disabled-input">
+					                <th colspan="" class="">
 					                	<select class="form-control" name="subgroupid" onchange="subgroupChanges(this)">
 					                		<option value="0">Please Select</option>
 				                            <?php foreach ($plansgroup as $gRow) { 
@@ -204,7 +205,7 @@
 					                <tr>
 					                <input type="hidden" name="patientid" id="patientid" value="0">
 					                <input type="hidden" name="insurance_plans_id" id="insurance_plans_id" value="<?php echo isset($_GET['plansid'])?$_GET['plansid']:0;?>">
-					                <input type="hidden" name="officeid" value="1">
+					                <input type="hidden" name="officeid" value="<?php echo $this->id_office; ?>">
 					                <th>Patient Name</th>
 					                <th><input type="text" name="p_firstname" class="form-control p_firstname" value=""></th>
 					                <th><input type="text" name="p_lastname" class="form-control p_lastname" value=""></th>
@@ -288,8 +289,8 @@
 					                <th>Missing Tooth Clause</th>
 					                <th class="text-center">
 					                	<select class="form-control" name="missing_tooth_clause">
-					                		<option value="0" <?php echo isset($plan['missing_tooth_clause']) && $plan['missing_tooth_clause']=='0'?'selected':'' ?>>N</option>
-					                		<option value="1" <?php echo isset($plan['missing_tooth_clause']) && $plan['missing_tooth_clause']=='1'?'selected':'' ?>>Y</option>
+					                		<option value="0" <?php echo isset($plan['missing_tooth_clause']) && $plan['missing_tooth_clause']=='0'?'selected':'' ?>>No</option>
+					                		<option value="1" <?php echo isset($plan['missing_tooth_clause']) && $plan['missing_tooth_clause']=='1'?'selected':'' ?>>Yes</option>
 					                	</select>
 					                </th>
 					                </tr>
@@ -297,8 +298,8 @@
 					                <th>Predetermination Needed</th>
 					                <th class="text-center">
 					                	<select class="form-control" name="predetermination_needed" onchange="predeterminationNeeded(this)">
-					                		<option value="0" <?php echo isset($plan['predetermination_needed']) && $plan['predetermination_needed']=='0'?'selected':'' ?>>N</option>
-					                		<option value="1" <?php echo isset($plan['predetermination_needed']) && $plan['predetermination_needed']=='1'?'selected':'' ?>>Y</option>
+					                		<option value="0" <?php echo isset($plan['predetermination_needed']) && $plan['predetermination_needed']=='0'?'selected':'' ?>>No</option>
+					                		<option value="1" <?php echo isset($plan['predetermination_needed']) && $plan['predetermination_needed']=='1'?'selected':'' ?>>Yes</option>
 					                	</select>
 
 					                </th>
@@ -872,38 +873,47 @@
 					            <div class="row">
 					            	<div class="col-md-6">
 					            		 <table class="table table-bordered disabled-input">
-							                <tr>
-							                <th colspan="5" class="text-center">Downgrades</th>
-							                </tr>
-							                <tr>
-							                <th>Fillings</th>
-							                <th class="text-center">
-							                	<select class="form-control" name="filling_downgrades">
-							                		<option value="N" <?php echo isset($plan['filling_downgrades']) && $plan['filling_downgrades']=='N'?'selected':'' ?>>N</option>
-							                		<option value="Y" <?php echo isset($plan['filling_downgrades']) && $plan['filling_downgrades']=='Y'?'selected':'' ?>>Y</option>
-							                	</select>
-							                </th>
-							                </tr>
-							                <tr>
-							                <th>Crown Molar Downgrades</th>
-							                <th class="text-center">
-							                	<select class="form-control" name="crown_molar_downgrades">
-							                		<option value="N" <?php echo isset($plan['crown_molar_downgrades']) && $plan['crown_molar_downgrades']=='N'?'selected':'' ?>>N</option>
-							                		<option value="Y" <?php echo isset($plan['crown_molar_downgrades']) && $plan['crown_molar_downgrades']=='Y'?'plan':'' ?>>Y</option>
-							                	</select>
+										      <tr>
+										      <th colspan="5" style="text-align: center !important;">Downgrades</th>
+										      </tr>
+										      <tr>
+										      <th></th>
+										      <th colspan="2">Fillings</th>
+										      <th colspan="2">Crown</th>
+										      </tr>
+										      <tr>
+										      <th colspan="">Molar</th>
+										      <th colspan="2" class="font-size">
 
-							                </th>
-							                </tr>
-							                <tr>
-							                <th>Crown Premolar Downgrades</th>
-							                <th class="text-center">
-							                	<select class="form-control" name="crown_premolar_downgrades">
-							                		<option value="N" <?php echo isset($plan['crown_premolar_downgrades']) && $plan['crown_premolar_downgrades']=='N'?'selected':'' ?>>N</option>
-							                		<option value="Y" <?php echo isset($plan['crown_premolar_downgrades']) && $plan['crown_premolar_downgrades']=='Y'?'selected':'' ?>>Y</option>
+										      	<select class="form-control" name="filling_molar_downgrades">
+							                		<option value="N" <?php echo isset($plan['filling_molar_downgrades']) && $plan['filling_molar_downgrades']=='N'?'selected':'' ?>>No</option>
+							                		<option value="Y" <?php echo isset($plan['filling_molar_downgrades']) && $plan['filling_molar_downgrades']=='Y'?'selected':'' ?>>Yes</option>
 							                	</select>
-							                </th>
-							                </tr>
-							            </table>
+										      </th>
+										      <th colspan="2" class="font-size">
+										      	<select class="form-control" name="crown_molar_downgrades">
+							                		<option value="N" <?php echo isset($plan['crown_molar_downgrades']) && $plan['crown_molar_downgrades']=='N'?'selected':'' ?>>No</option>
+							                		<option value="Y" <?php echo isset($plan['crown_molar_downgrades']) && $plan['crown_molar_downgrades']=='Y'?'selected':'' ?>>Yes</option>
+							                	</select>
+										      </th>
+										      </tr>
+										      <tr>
+										      <th colspan="">Premolar</th>
+										      <th colspan="2" class="font-size">
+										      	<select class="form-control" name="filling_premolar_downgrades">
+							                		<option value="N" <?php echo isset($plan['filling_premolar_downgrades']) && $plan['filling_premolar_downgrades']=='N'?'selected':'' ?>>No</option>
+							                		<option value="Y" <?php echo isset($plan['filling_premolar_downgrades']) && $plan['filling_premolar_downgrades']=='Y'?'selected':'' ?>>Yes</option>
+							                	</select>
+										      </th>
+										      <th colspan="2" class="font-size">
+										      	<select class="form-control" name="crown_premolar_downgrades">
+							                		<option value="N" <?php echo isset($plan['crown_premolar_downgrades']) && $plan['crown_premolar_downgrades']=='N'?'selected':'' ?>>No</option>
+							                		<option value="Y" <?php echo isset($plan['crown_premolar_downgrades']) && $plan['crown_premolar_downgrades']=='Y'?'selected':'' ?>>Yes</option>
+							                	</select>
+										      	</th>
+										      </tr>
+										    </table>
+
 					            	</div>
 					            	<div class="col-md-6">
 					            		<table class="table table-bordered disabled-input">
@@ -915,8 +925,8 @@
 							                <th>Limited oral evaluation – problem focused</th>
 							                <th class="text-center">
 							                	<select class="form-control" name="shares_freq_limit_exam">
-							                		<option value="0" <?php echo isset($shares[140]['shares_freq_limit_exam']) && $shares[140]['shares_freq_limit_exam']==0?'selected':'' ?>>N</option>
-							                		<option value="1" <?php echo isset($shares[140]['shares_freq_limit_exam']) && $shares[140]['shares_freq_limit_exam']==1?'selected':'' ?>>Y</option>
+							                		<option value="0" <?php echo isset($shares[140]['shares_freq_limit_exam']) && $shares[140]['shares_freq_limit_exam']==0?'selected':'' ?>>No</option>
+							                		<option value="1" <?php echo isset($shares[140]['shares_freq_limit_exam']) && $shares[140]['shares_freq_limit_exam']==1?'selected':'' ?>>Yes</option>
 							                	</select>
 							                </th>
 							                </tr>
@@ -925,8 +935,8 @@
 							                <th>Periodontal maintenance procedures</th>
 							                <th class="text-center">
 							                	<select class="form-control" name="shares_freq_perio_maint">
-							                		<option value="0" <?php echo isset($shares[4910]['shares_freq_perio_maint']) && $shares[4910]['shares_freq_perio_maint']==0?'selected':'' ?>>N</option>
-							                		<option value="1" <?php echo isset($shares[4910]['shares_freq_perio_maint']) && $shares[4910]['shares_freq_perio_maint']==1?'selected':'' ?>>Y</option>
+							                		<option value="0" <?php echo isset($shares[4910]['shares_freq_perio_maint']) && $shares[4910]['shares_freq_perio_maint']==0?'selected':'' ?>>No</option>
+							                		<option value="1" <?php echo isset($shares[4910]['shares_freq_perio_maint']) && $shares[4910]['shares_freq_perio_maint']==1?'selected':'' ?>>Yes</option>
 							                	</select>
 							                </th>
 							                </tr>
@@ -996,7 +1006,7 @@
 			                <th colspan="4" class="text-center">Notes</th>
 			                </tr>
 			                <tr>
-			                <th><textarea class="form-control" name="freetexts"><?php echo isset($patient['freetexts'])?$patient['freetexts']:''; ?></textarea></th>					               
+			                <th><textarea class="form-control" name="freetexts" style="height: 70px"><?php echo isset($patient['freetexts'])?$patient['freetexts']:''; ?></textarea></th>					               
 			                </tr>					               
 			            </table>
 					</div>

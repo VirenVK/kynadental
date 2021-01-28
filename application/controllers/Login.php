@@ -10,6 +10,8 @@ class Login extends CI_Controller{
 	{
 		parent::__construct();
 		$this->load->model('login_model');
+		$this->load->model('dashboard/dashboard_model');
+
 	}
 	/*This is default method*/
 	function index(){
@@ -22,6 +24,8 @@ class Login extends CI_Controller{
 			$returnVal = $this->login_model->checkLogin($postArr);
 			if($returnVal['status']==STATUS_SUCCESS) {
 				$row = $returnVal['data'];
+				$office = $this->dashboard_model->office(array('userid'=>$row['id_user']));
+				$row['officeid'] = isset($office[0]['officeid'])?$office[0]['officeid']:0;
 				unset($row['is_login_active']);
 				unset($row['is_active']);
 				/*Login-in user logout*/

@@ -17,13 +17,13 @@ class Dashboard extends MY_Controller{
 	function adminDashboard(){
 
 		$postVal=$_POST;
-		$postVal['officeId']=isset($_GET['officeId'])?$_GET['officeId']:1;
 		$postVal['userid']=$this->id_user;
 		if (isset($_POST['f_name'])) {
 			$data['patient_data']=1;
 		}else{
 			$data['patient_data']=0;
 		}
+		$postVal['officeId']=$this->id_office;
 		$data['total_jd'] = 0;//$this->dashboard_model->getNewJd();
 		$data['total_condidate'] = 0;//$this->dashboard_model->getNewCondidate();
 		$data['office'] = $this->dashboard_model->office($postVal);
@@ -49,15 +49,17 @@ class Dashboard extends MY_Controller{
 
 		$id=isset($_GET['id']) && $_GET['id']>0?$_GET['id']:0;
 		$plansid=isset($_GET['plansid']) && $_GET['plansid']>0?$_GET['plansid']:0;
+		$officeid=$this->id_office;
+
 		$data['insurance']=$this->common_model->getAllInsurance();
 		$data['insurance_plans']=$this->common_model->getAllInsurancePlan();
 		$data['plansgroup']=$this->dashboard_model->getAllInsurancePlanSubGroup($plansid);
 		$data['employers']=$this->common_model->getAllEmployers();
 		$data['cdt_codes']=$this->patient_model->getCdtCodes();
 		//printData($data['cdt_codes']);
-		$data['feeschedule'] = $this->dashboard_model->getFeeSchedule(1);
-		$data['office_cdtcodes'] = $this->dashboard_model->OfficeCdtcodes(1);
-		$data['officeName'] = $this->dashboard_model->OfficeName(1);
+		$data['feeschedule'] = $this->dashboard_model->getFeeSchedule($officeid);
+		$data['office_cdtcodes'] = $this->dashboard_model->OfficeCdtcodes($officeid);
+		$data['officeName'] = $this->dashboard_model->OfficeName($officeid);
 		$data['patient'] = $this->patient_model->patientdetails($id);
 		$data['patientInsurance'] = $this->patient_model->patientInsurance($id);
 		$data['plan'] = $this->dashboard_model->Plans($plansid);
@@ -66,9 +68,13 @@ class Dashboard extends MY_Controller{
 		$data['history'] = $this->dashboard_model->PatientHistory($id);
 		$data['users'] = $this->dashboard_model->getAllUser();
 		$data['agent'] = $this->dashboard_model->InsuranceAgent($id);
-
-		$data['pvalue'] = array('view' => 'edit_patient', 'title' => 'Edit Patient');
-		$this->loadView($data);
+		// check office id
+		if ($data['patient']['officeid']==$officeid) {
+			$data['pvalue'] = array('view' => 'edit_patient', 'title' => 'Edit Patient');
+			$this->loadView($data);
+		}else{
+			redirect(WEB_URL.'dashboard/index');
+		}
 	}
 
 	function addInsurance()
@@ -96,7 +102,7 @@ class Dashboard extends MY_Controller{
 	{
 		if(isset($_POST['submit']) && $_POST['submit'] == 'submit'){
 			$postVal = $_POST;
-			$postVal['officeid']=1;
+			$postVal['officeid']=$this->id_office;
 			$postVal['id_user']=$this->id_user;
 			$returnVal=$this->dashboard_model->addNewPatient($postVal);
 			$this->setSuccessFailMessage($returnVal);
@@ -107,15 +113,16 @@ class Dashboard extends MY_Controller{
 
 		$id=isset($_GET['id']) && $_GET['id']>0?$_GET['id']:0;
 		$plansid=isset($_GET['plansid']) && $_GET['plansid']>0?$_GET['plansid']:0;
+		$officeid=$this->id_office;
 
 		$data['insurance']=$this->common_model->getAllInsurance();
 		$data['insurance_plans']=$this->common_model->getAllInsurancePlan();
 		$data['employers']=$this->common_model->getAllEmployers();
 		$data['cdt_codes']=$this->patient_model->getCdtCodes();
-		$data['office_cdtcodes'] = $this->dashboard_model->OfficeCdtcodes(1);
+		$data['office_cdtcodes'] = $this->dashboard_model->OfficeCdtcodes($officeid);
 		$data['plansgroup']=$this->dashboard_model->getAllInsurancePlanSubGroup($plansid);
-		$data['feeschedule'] = $this->dashboard_model->getFeeSchedule(1);
-		$data['officeName'] = $this->dashboard_model->OfficeName(1);
+		$data['feeschedule'] = $this->dashboard_model->getFeeSchedule($officeid);
+		$data['officeName'] = $this->dashboard_model->OfficeName($officeid);
 		$data['patient'] = $this->patient_model->patientdetails($id);
 		$data['patientInsurance'] = $this->patient_model->patientInsurance($id);
 		$data['plan'] = $this->dashboard_model->Plans($plansid);
@@ -167,12 +174,13 @@ class Dashboard extends MY_Controller{
 		$this->load->library('pdf');
 		$id=isset($_GET['id']) && $_GET['id']>0?$_GET['id']:0;
 		$plansid=isset($_GET['plansid']) && $_GET['plansid']>0?$_GET['plansid']:0;
+		$officeid=$this->id_office;
 		$insurance=$this->common_model->getAllInsurance();
 		$insurance_plans=$this->common_model->getAllInsurancePlan();
 		$employers=$this->common_model->getAllEmployers();
 		$cdt_codes=$this->patient_model->getCdtCodes();
-		$office_cdtcodes = $this->dashboard_model->OfficeCdtcodes(1);
-		$officeName = $this->dashboard_model->OfficeName(1);
+		$office_cdtcodes = $this->dashboard_model->OfficeCdtcodes($officeid);
+		$officeName = $this->dashboard_model->OfficeName($officeid);
 		$patient = $this->patient_model->patientdetails($id);
 		$patientInsurance = $this->patient_model->patientInsurance($id);
 		$plan = $this->dashboard_model->Plans($plansid);
@@ -180,16 +188,20 @@ class Dashboard extends MY_Controller{
 		$history = $this->dashboard_model->PatientHistory($id);
 		$users = $this->dashboard_model->getAllUser();
 		$agent = $this->dashboard_model->InsuranceAgent($id);
-		$feeschedule = $this->dashboard_model->getFeeSchedule(1);
-		$office_cdtcodes = $this->dashboard_model->getOfficeCdtcodes(1,$plansid);
-		// printData($office_cdtcodes);
-		// exit();
-		// $data['pvalue'] = array('view' => 'edit_patient', 'title' => 'Edit Patient');
-
-
-		$html=$this->load->view('pdf_patient',compact('insurance','insurance_plans','employers','cdt_codes','office_cdtcodes','officeName','patient','patientInsurance','plan','insurancePlans','history','users','agent','feeschedule'),true);
+		$feeschedule = $this->dashboard_model->getFeeSchedule($officeid);
+		$office_cdtcodes = $this->dashboard_model->getOfficeCdtcodes($officeid,$plansid);
+		$plansgroup=$this->dashboard_model->getAllInsurancePlanSubGroup($plansid);
+		$getsubgroup = $this->dashboard_model->getAjaxPlansSubGroup($plansid,$patientInsurance['subgroupid']);
+		
+		if ($patient['officeid']==$officeid) {
+			$data['pvalue'] = array('view' => 'edit_patient', 'title' => 'Edit Patient');
+			$this->loadView($data);
+		}else{
+			redirect(WEB_URL.'dashboard/index');
+		}
+		$html=$this->load->view('pdf_patient',compact('insurance','insurance_plans','employers','cdt_codes','office_cdtcodes','officeName','patient','patientInsurance','plan','insurancePlans','history','users','agent','feeschedule','plansgroup','getsubgroup'),true);
 		//$html = $this->output->get_output();
-		$this->pdf->generate($html,'CustomerInvoice');
+		$this->pdf->generate($html,'Patient-pdf-'.$id);
 		//$this->load->view('pdf_patient',$data);
 	}
 
@@ -203,6 +215,14 @@ class Dashboard extends MY_Controller{
 		
 	}
 
+	function setOfficeId()
+	{	
+		if (isset($_GET['id'])) {
+			$_SESSION['officeid'] =$_GET['id'];
+		}else{
+			$_SESSION['officeid'] =$this->id_office;
+		}
+	}
 
 //End
 }
