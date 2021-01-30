@@ -37,6 +37,9 @@
 .tablinks{
   color: white
 }
+.form-check-label{
+  margin-top: 3px;
+}
 </style>
 
 <div id="page-top">
@@ -72,17 +75,15 @@
                 <div class="card-header">
                   <div class="row">
                     <div class="col-xl-12 col-md-12 mb-4">
+                      <a class="btn btn-sm btn-outline-primary" href="<?php echo WEB_URL.'treatmentPlan/allPatientTrtmntPlan?patientid='.$_GET['patientid'];?>" style='float: right;' >Back</a>
                         <center><h5>PATIENT INFO</h5></center>
+                        
                     </div>
                     <div class="col-xl-12">
-                      <?php
-                          $attributes = array('id' => '', 'autocomplete'=>'off');
-                          $url=isset($_GET['officeId'])?'treatmentPlan/index?officeId='.$_GET['officeId']:'treatmentPlan/index';
-                          echo form_open(WEB_URL.$url, $attributes);
-                        ?>
                           <div class="row">
                             <div class="col-sm-4">
                               <div class="form-group">
+                               
                                 <label for="name">First Name: </label>
                                 <span class="text"><?php echo $patient["p_firstname"];?></span>
                               </div>
@@ -102,8 +103,6 @@
                               </div>
                             </div>
                           </div>
-                          
-                    <?php echo form_close();?>
                     </div>
                     
                   </div>
@@ -111,40 +110,77 @@
               </div>
             </div>
           </div>
+           <?php
+            $attributes = array('id' => '', 'autocomplete'=>'off');
+            $url='treatmentPlan/patientTrtmntPlan';
+            echo form_open(WEB_URL.$url, $attributes);
+            ?>
+             <input type="hidden" name="patientid" value="<?php echo isset($_GET['patientid'])?$_GET['patientid']:0; ?>">
           <div class="row">
-            <div class="col-sm-6">
-              <div class="card">
-                <ul class="list-group list-group-flush" id="treatmentGroup">
-                <?php
-                  if(!empty($treatmentGroups)) {
-                    foreach($treatmentGroups as $tg){
-                ?>
-                  <li class="list-group-item">
-                    <input class="form-check-input" type="checkbox" name="treatmentGroup[]" value="<?php echo $tg->idtrtmnt_groups; ?>" aria-label="...">
-                    <?php echo $tg->trtmnt_groupsdetails; ?>
-                  </li>
-                <?php }}?>
-                </ul>
-              </div>
-            </div>
-            <div class="col-sm-6">
-              <div class="card">
-                <div class="card-body" id="cdtCodesMainDiv">
-                  Please select treatment groups
+            <div class="col-xl-6">
+              <div class="card shadow mb-4">
+                <div class="card-header">
+                   <center><h5>Treatment Group</h5></center>
+                  <ul class="list-group list-group-flush" id="treatmentGroup" style="height: 200px;overflow: scroll;">
+                    <?php
+                      if(!empty($treatmentGroups)) {
+                        foreach($treatmentGroups as $tg){
+                    ?>
+                      <li class="list-group-item">
+                        <input class="form-check-input" type="checkbox" name="treatmentGroup[]" value="<?php echo $tg->idtrtmnt_groups; ?>" aria-label="...">
+                        <?php echo $tg->trtmnt_groupsdetails; ?>
+                      </li>
+                    <?php }}?>
+                    </ul>
+                    <br>
+                    <div class="row">
+                      <div class="col-sm-6">
+                        <center><h6>Cdt Codes</h6></center>
+                        <ul class="list-group list-group-flush" id="treatmentGroup" style="height: 200px;overflow: scroll;">
+                        <?php
+                          if(!empty($cdt_codes)) {
+                            foreach($cdt_codes as $code){
+                        ?>
+                          <li class="list-group-item">
+                            <input class="" type="checkbox" name="[]" onchange="cdt_codes('<?php echo $code->cdtid; ?>','<?php echo $code->cdt_codes; ?>')" value="<?php echo $code->cdtid; ?>" aria-label="...">
+                            <?php echo $code->cdt_codes; ?>
+                          </li>
+                        <?php }}?>
+                        </ul>
+                      </div>
+                      <div class="col-sm-6">
+                        <div class="form-group">
+                          <label for="name">Tooth</label>
+                          <input type="text" name="tooth" id="name" class="form-control" placeholder="Tooth">
+                        </div>
+                         <div class="form-group">
+                          <label for="email">Dentist</label>
+                          <select class="form-control" name="iddentist">
+                            <?php foreach ($dentist as $dent) { ?>
+                              <option value="<?php echo $dent->iddentist;?>"><?php echo $dent->firstname.' '.$dent->lastname ?></option>
+                            <?php } ?>
+                          </select>
+                        </div>
+                      </div>
+                    
+                    </div>
                 </div>
               </div>
             </div>
-
-            <div class="col-sm-6">
-              <div class="card">
-                <div class="card-body" id="remainingTrtmntGrpDiv">
+            <div class="col-xl-6">
+              <div class="card shadow mb-4">
+                <div class="card-header">
                   
+                  <div class="card-body" id="cdtCodesMainDiv">
+                  Please select treatment groups
+                  </div>
+                  <input type="submit" name="submit" id="submit" value="submit" style="float: right;display: none;" class="btn btn-primary">
                 </div>
               </div>
             </div>
-
           </div>
         </div>
+        <?php echo form_close();?>
         <!-- /.container-fluid -->
       </div>
       <!-- End of Main Content -->
@@ -194,7 +230,7 @@
             for (var i = 0; i < response.checkedTrtmntGrp.length; i++) {
               if(checkedTrtmntGrp[i].cdt_codes != null){
                 htmlDiv +='<div class="form-check form-switch">';
-                htmlDiv +='<input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" name="checkedTrtmntGrpCdtCode[]" value="'+checkedTrtmntGrp[i].cdtid+'" >';
+                htmlDiv +='<input class="form-check-input" type="checkbox" checked id="flexSwitchCheckDefault" name="checkedTrtmntGrpCdtCode[]" value="'+checkedTrtmntGrp[i].cdtid+'" >';
                 htmlDiv +='<label class="form-check-label" for="flexSwitchCheckDefault">'+checkedTrtmntGrp[i].cdt_codes+'</label>';
                 htmlDiv +='</div>';
               }
@@ -206,18 +242,37 @@
             for (var i = 0; i < response.uncheckedTrtmntGrp.length; i++) {
               if(uncheckedTrtmntGrp[i].cdt_codes != null){
                 htmlDiv1 +='<div class="form-check form-switch">';
-                htmlDiv1 +='<input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" name="uncheckedTrtmntGrpCdtCode[]" value="'+uncheckedTrtmntGrp[i].cdtid+'" >';
+                htmlDiv1 +='<input class="form-check-input" type="checkbox" checked id="flexSwitchCheckDefault" name="uncheckedTrtmntGrpCdtCode[]" value="'+uncheckedTrtmntGrp[i].cdtid+'" >';
                 htmlDiv1 +='<label class="form-check-label" for="flexSwitchCheckDefault">'+uncheckedTrtmntGrp[i].cdt_codes+'</label>';
                 htmlDiv1 +='</div>';
               }
             }
             jQuery("#remainingTrtmntGrpDiv").html(htmlDiv1);
+
+            $('#submit').show();
         }
       });
 
     });
   });
 
+  function cdt_codes(id,code)
+  {
+    var checked=$('.form-check-input'+id).val();
+    if (checked > 0) {
+      $('.form-check-input2'+id).html('');
+      return
+    }
+    var htmlDiv1 = '';
+    var val = this.checked ? this.value : '';
+     htmlDiv1 +='<div class="form-check form-switch form-check-input2'+id+'">';
+     htmlDiv1 +='<input class="form-check-input form-check-input'+id+'" type="checkbox" checked id="flexSwitchCheckDefault" name="checkedTrtmntGrpCdtCode[]" value="'+id+'" >';
+     htmlDiv1 +='<label class="form-check-label" for="flexSwitchCheckDefault">'+code+'</label>';
+     htmlDiv1 +='</div>';
+
+     jQuery("#cdtCodesMainDiv").append(htmlDiv1);
+
+  }
  
   
   </script>

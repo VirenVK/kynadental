@@ -106,9 +106,9 @@
                     <div class="col-sm-2 text-right">
                       <div class="form-group">
                          <label for="email">Select Office</label>
-                         <select class="form-control" id="changeOffice">
+                          <select class="form-control" id="changeOffice">
                             <?php foreach ($office as $row) { ?>
-                                <option value="<?php echo $row['officeid']; ?>" <?php echo isset($_GET['officeId']) && $_GET['officeId']==$row['officeid']?'selected':'' ?>><?php echo $row['officename']; ?></option>
+                                <option value="<?php echo $row['officeid']; ?>" <?php echo $this->id_office > 0 && $this->id_office==$row['officeid']?'selected':'' ?>><?php echo $row['officename']; ?></option>
                             <?php } ?>
                           </select>
                       </div>
@@ -135,12 +135,13 @@
                           <th class="border-0">Date of Birth</th>
                         </tr>
                         </thead>
+                      <!--   onclick="window.location='<?php echo WEB_URL.'treatmentPlan/patientTrtmntPlan?patientid='.$pat['patientid']?>'" -->
                         <tbody>
                             <?php
                           if(!empty($allpatientdataentry)) {
                             foreach($allpatientdataentry as $pat){
                               ?>
-                              <tr onclick="window.location='<?php echo WEB_URL.'treatmentPlan/patientTrtmntPlan?patientid='.$pat['patientid'].'&officeId='.$pat['officeid'];?>'" style="cursor:pointer">
+                              <tr onclick="window.location='<?php echo WEB_URL.'treatmentPlan/allPatientTrtmntPlan?patientid='.$pat['patientid']?>'" style="cursor:pointer">
                                 <td><?php echo $pat['patientid']?></td>
                                 <td><?php echo $pat['p_firstname']?></td>
                                 <td><?php echo $pat['p_lastname'];?></td>
@@ -170,9 +171,12 @@
   $(function(){
     $("#example").dataTable();
 
-     $("#changeOffice").change(function(){
-     var id = $('#changeOffice').val();
-     window.location.href = "<?php echo WEB_URL.'treatmentPlan/index?officeId='?>"+id;
+      $("#changeOffice").change(function(){
+      var id = $('#changeOffice').val();
+      var weburl = $('meta[name="weburl"]').attr('content');
+       $.get(weburl + 'dashboard/setOfficeId?id='+id, function (d) {
+        window.location.href = "<?php echo WEB_URL.'treatmentPlan/index'?>";
+      });
     });
 
     $("#treatmentPlan").click(function(){

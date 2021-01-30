@@ -17,7 +17,7 @@ class TreatmentPlan extends MY_Controller{
     
     function treatmentPlan(){
 		$postVal=$_POST;
-		$postVal['officeId']=isset($_GET['officeId'])?$_GET['officeId']:1;
+		$postVal['officeId']=$this->id_office;
 		$postVal['userid']=$this->id_user;
 		if (isset($_POST['f_name'])) {
 			$data['patient_data']=1;
@@ -36,13 +36,26 @@ class TreatmentPlan extends MY_Controller{
     }
     
     function patientTrtmntPlan(){
-        $patient_id = isset($_GET['patientid']) && $_GET['patientid']>0 ? $_GET['patientid'] : 0;
-        $data['officeId'] = isset($_GET['officeId']) ? $_GET['officeId'] : 1;
+    	if (isset($_POST['submit']) && $_POST['submit']=='submit') {
+    		$postVal=$_POST;
+    		$postVal['id_user']=$this->id_user;
+    		$postVal['officeid'] = $this->id_office;
+    		$returnVal= $this->treatment_plan_model->addPatientTrtmntPlan($postVal);
+    		$this->setSuccessFailMessage($returnVal);
+			if($returnVal['status'] == STATUS_SUCCESS){
+				redirect(WEB_URL.'treatmentPlan/allPatientTrtmntPlan?patientid='.$postVal['patientid']);
+			}
+			redirect(WEB_URL.'treatmentPlan/allPatientTrtmntPlan?patientid='.$postVal['patientid']);
+    	}
 
-        $data['patient'] = $this-> patient_model ->patientdetails($patient_id);
-		$data['treatmentGroups'] = $this-> treatment_plan_model -> getTreatmentGroups($data['officeId']);
+        $patient_id = isset($_GET['patientid']) && $_GET['patientid']>0 ? $_GET['patientid'] : 0;
+        $data['officeId'] = $this->id_office;
+        $data['patient'] = $this->patient_model->patientdetails($patient_id);
+		$data['treatmentGroups'] = $this->treatment_plan_model->getTreatmentGroups($data['officeId']);
+		$data['cdt_codes'] = $this->treatment_plan_model->getCdtCodes($data['officeId']);
+		$data['dentist'] = $this->treatment_plan_model->getDentist($data['officeId']);
     
-		$data['pvalue'] = array('view' => 'patient_treatment_plan.php', 'title' => 'Patient treatment plan');
+		$data['pvalue'] = array('view' => 'patient_treatment_plan', 'title' => 'Patient treatment plan');
 		$this->loadView($data);
 	}
 	
@@ -53,9 +66,49 @@ class TreatmentPlan extends MY_Controller{
 		$treatmentGroupId = $this->input->post('treatmentGroupId');
 		$remainingTrtmntGrpId = $this->input->post('remainingTrtmntGrpId');
 		
-		$json = $this-> treatment_plan_model -> getCdtCodesByTrtmtGroupId($treatmentGroupId, $data['officeId'], $remainingTrtmntGrpId);
+		$json = $this->treatment_plan_model -> getCdtCodesByTrtmtGroupId($treatmentGroupId, $data['officeId'], $remainingTrtmntGrpId);
         header('Content-Type: application/json');
 		echo json_encode($json);
+    }
+
+    function allPatientTrtmntPlan()
+    {
+    	if (isset($_GET['patientid']) && $_GET['patientid'] >0) {
+    		$postVal['patientid']= $_GET['patientid'];
+    		$postVal['officeid'] = $this->id_office;
+    		$data['patientTrtmnt'] = $this->treatment_plan_model->allPatientTrtmntPlanList($postVal);
+   			$data['patientid'] = $_GET['patientid'];
+    		$data['pvalue'] = array('view' => 'allPatientTrtmntPlan', 'title' => 'Patient Treatment Plan');
+			$this->loadView($data);
+
+    	}
+    }
+
+    function treatmentPlanDetails()
+    {	
+    	$officeid = $this->id_office;
+    	$id=$_GET['id'];
+    	$patientid = $_GET['patientid'];
+    	$postVal['patientid']=$patientid;
+    	$postVal['officeid'] = $officeid;
+    	$postVal['id']=$id;
+    	$data['patient'] = $this->patient_model->patientdetails($patientid);
+    	$data['officeName'] = $this->dashboard_model->OfficeName($officeid);
+    	$data['lines'] = $this->treatment_plan_model->allTreatmentPlanDetails($postVal);
+    	$data['header'] = $this->treatment_plan_model->HeaderTreatmentPlanDetails($postVal);
+    	$data['pvalue'] = array('view' => 'treatmentPlanDetails', 'title' => 'Patient Treatment Plan');
+			$this->loadView($data);
+    }
+
+    function deleteTreatmentPlan()
+    {
+    	$postVal=$_GET;
+    	$returnVal= $this->treatment_plan_model->deletePatientTrtmntPlan($postVal);
+		$this->setSuccessFailMessage($returnVal);
+		if($returnVal['status'] == STATUS_SUCCESS){
+			redirect(WEB_URL.'treatmentPlan/allPatientTrtmntPlan?patientid='.$postVal['patientid']);
+		}
+		redirect(WEB_URL.'treatmentPlan/allPatientTrtmntPlan?patientid='.$postVal['patientid']);
     }
     //End
 }

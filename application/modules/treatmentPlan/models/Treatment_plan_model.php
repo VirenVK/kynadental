@@ -84,6 +84,154 @@ class Treatment_plan_model extends MY_Model{
 		}
 		return ["checkedTrtmntGrp" => $cdtCodeArr, "uncheckedTrtmntGrp" => $remainingCdtCodeArr];	
 	}
+
+	 function getCdtCodes($officeId=0)
+	{
+		$result = array();
+		$this->db->select('*');
+		$this->db->from('cdt_codes');
+		// $this->db->where('officeid', $officeId);
+		$query = $this->db->get();
+		if($query->num_rows() > 0){
+			$result = $query->result();
+		}
+		return $result;
+	}
+	 function getDentist()
+	{
+		$result = array();
+		$this->db->select('*');
+		$this->db->from('credentials_dentist');
+		// $this->db->where('officeid', $officeId);
+		$query = $this->db->get();
+		if($query->num_rows() > 0){
+			$result = $query->result();
+		}
+		return $result;
+	}
+
+	function addPatientTrtmntPlan($postVal=array())
+	{
+		if (count($postVal['checkedTrtmntGrpCdtCode'])>0) {
+			$data=array();
+			// delete
+			$this->db->where(array('officeid'=>$postVal['officeid'],'patientid'=>$postVal['patientid']));
+			$this->db->delete('trtmnt_patientcdtcode');
+
+			foreach ($postVal['checkedTrtmntGrpCdtCode'] as $key => $value) {
+				$post['officeid']=$postVal['officeid'];
+				$post['patientid']=$postVal['patientid'];
+				$post['cdtid']=$postVal['checkedTrtmntGrpCdtCode'][$key];
+				$check = $this->checkTrtmntPatientCdtcode($post);
+				
+				if (count($check) == 0) {
+
+					$data[]=array(
+					'officeid'=>$postVal['officeid'],
+					'patientid'=>$postVal['patientid'],
+					'cdtid'=>$postVal['checkedTrtmntGrpCdtCode'][$key],
+					'userid'=>$postVal['id_user'],
+					'tooth'=>$postVal['tooth'],
+					'iddentist'=>$postVal['iddentist'],
+					'updatedby'=>$postVal['iddentist'],
+					'updatedon'=>getCurrentDateTime(),
+					);
+				}
+			}
+			if (count($data)>0) {
+				$this->db->insert_batch('trtmnt_patientcdtcode', $data);
+				// PROCEDURE
+				try {
+					$result = array();
+						$sql = "CALL trtmnt_plan(?,?,?)";
+						$query = $this->db->query($sql,array($postVal['officeid'],$postVal['patientid'],$postVal['id_user']));
+						$result = $query->result_array();
+						$query->next_result();
+					// if (count($data)==1) {
+						
+					// }
+
+					return array('status' => STATUS_SUCCESS, 'msg' => isset($result)?json_encode($result):'Added successfully');
+				}
+				//catch exception
+				catch(Exception $e) {
+				  	return array('status' => STATUS_FAIL, 'msg' => 'Cdt Code is already exists');
+				}
+				
+			}else{
+				return array('status' => STATUS_FAIL, 'msg' => 'Cdt Code is already exists');
+			}
+			
+		}
+		return array('status' => STATUS_FAIL, 'msg' => 'Something went wrong!');
+	}
+
+
+	function allPatientTrtmntPlanList($postVal=array())
+	{
+		$result = array();
+		$this->db->select('*');
+		$this->db->from('trtmnt_plan_header');
+		$this->db->where(array('officeid'=>$postVal['officeid'],'patientid'=>$postVal['patientid']));
+		$query = $this->db->get();
+		if($query->num_rows() > 0){
+			$result = $query->result_array();
+		}
+		return $result;
+	}
+
+	function HeaderTreatmentPlanDetails($postVal=array())
+	{
+		$result = array();
+		$this->db->select('*');
+		$this->db->from('trtmnt_plan_header');
+		$this->db->where(array('idtrtmnt_plan_hdr'=>$postVal['id']));
+		$query = $this->db->get();
+		if($query->num_rows() > 0){
+			$result = $query->row_array();
+		}
+		return $result;
+	}
+
+	function allTreatmentPlanDetails($postVal=array())
+	{
+		$result = array();
+		$this->db->select('t.*,c.cdt_codes');
+		$this->db->from('trtmnt_plan_detail'.' t');
+		$this->db->join('cdt_codes'.' c','t.cdtid=c.cdtid','left');
+		$this->db->where(array('t.officeid'=>$postVal['officeid'],'t.patientid'=>$postVal['patientid'],'t.idtrtmnt_plan_hdr'=>$postVal['id']));
+		$this->db->order_by('t.cdtid','desc');
+		$query = $this->db->get();
+		if($query->num_rows() > 0){
+			$result = $query->result_array();
+		}
+		return $result;
+	}
+
+	function checkTrtmntPatientCdtcode($postVal=array())
+	{
+		$result = array();
+		$this->db->select('*');
+		$this->db->from('trtmnt_patientcdtcode');
+		$this->db->where(array('officeid'=>$postVal['officeid'],'patientid'=>$postVal['patientid'],'cdtid'=>$postVal['cdtid']));
+		$query = $this->db->get();
+		if($query->num_rows() > 0){
+			$result = $query->result_array();
+		}
+		return $result;
+	}
+
+	function deletePatientTrtmntPlan($postVal=array())
+	{
+		$this->db->where('idtrtmnt_plan_hdr',$postVal['id']);
+		$this->db->delete('trtmnt_plan_header');
+
+		$this->db->where('idtrtmnt_plan_hdr',$postVal['id']);
+		$this->db->delete('trtmnt_plan_detail');
+
+		return array('status' => STATUS_SUCCESS, 'msg' =>'Deleted successfully');
+	}
+
 //End
 }
 ?>
